@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const connection = async () => {
   try {
-    await mongoose.connect("mongodb://localhost:27017/VibeShare");
+    await mongoose.connect(process.env.MONGO_URI);
     console.log("Conectado correctamente a la base de datos VibeShare");
   } catch (error) {
     console.log(error);
