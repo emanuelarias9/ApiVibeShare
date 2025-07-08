@@ -47,9 +47,9 @@ const UserRoutes = require("./routes/UserRoutes");
 const PostRoutes = require("./routes/PostRoutes");
 const FollowRoutes = require("./routes/FollowRoutes");
 
-app.use(process.env.URL_API_BASE, UserRoutes);
-app.use(process.env.URL_API_BASE, PostRoutes);
-app.use(process.env.URL_API_BASE, FollowRoutes);
+app.use(`${process.env.URL_API_BASE}/user`, UserRoutes);
+app.use(`${process.env.URL_API_BASE}/post`, PostRoutes);
+app.use(`${process.env.URL_API_BASE}/follow`, FollowRoutes);
 
 // Iniciar servidor y escuchar rutas
 app.listen(port, () => {
