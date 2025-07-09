@@ -6,6 +6,7 @@ const PostController = require("../controllers/PostController");
 //Definir rutas
 router.get("TestUser", UserController.TestUser);
 router.post("/signup", UserController.SignUpUser);
+router.post("/login", UserController.Login);
 
 // Exportar el router
 module.exports = router;

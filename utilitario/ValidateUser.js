@@ -41,4 +41,35 @@ const ValidateUserExists = async (params) => {
   }
 };
 
-module.exports = { ValidateBasicInfoUser, ValidateUserExists };
+const ValidateLoginInfo = (params) => {
+  if (validator.isEmpty(params.email, { ignore_whitespace: true })) {
+    throw new Error("No has ingresado el email");
+  }
+  if (!validator.isEmail(params.email)) {
+    throw new Error("El email no es válido");
+  }
+  if (validator.isEmpty(params.password, { ignore_whitespace: true })) {
+    throw new Error("No has ingresado la contraseña");
+  }
+};
+
+const ValidateLoginCredentials = async (params) => {
+  const email = params.email.toLowerCase();
+  const user = await userModel.findOne({ email }).exec();
+
+  if (!user || user.length === 0) {
+    throw new Error("El usuario no existe");
+  }
+
+  let password = bcrypyt.compareSync(params.password, user.password);
+  if (password === false) {
+    throw new Error("La contraseña es incorrecta");
+  }
+};
+
+module.exports = {
+  ValidateBasicInfoUser,
+  ValidateUserExists,
+  ValidateLoginInfo,
+  ValidateLoginCredentials,
+};

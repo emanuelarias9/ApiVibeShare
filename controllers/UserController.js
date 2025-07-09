@@ -5,6 +5,8 @@ const bcrypt = require("bcrypt");
 const {
   ValidateBasicInfoUser,
   ValidateUserExists,
+  ValidateLoginInfo,
+  ValidateLoginCredentials,
 } = require("../utilitario/ValidateUser");
 
 const TestUser = (req, res) => {
@@ -27,7 +29,7 @@ const SignUpUser = async (req, res) => {
   }
 
   try {
-    ValidateUserExists(params);
+    await ValidateUserExists(params);
   } catch (error) {
     return res.status(409).json({
       status: "Conflict",
@@ -56,7 +58,40 @@ const SignUpUser = async (req, res) => {
   });
 };
 
+const Login = async (req, res) => {
+  let params = req.body;
+
+  try {
+    ValidateLoginInfo(params);
+  } catch (error) {
+    return res.status(400).json({
+      status: "Bad Request",
+      statusCode: 400,
+      message: error,
+    });
+  }
+
+  try {
+    await ValidateLoginCredentials(params);
+  } catch (error) {
+    return res.status(401).json({
+      status: "Unauthorized",
+      statusCode: 401,
+      message: error.message,
+    });
+  }
+
+  return res.status(201).json({
+    status: "OK",
+    statusCode: 200,
+    message: "Login successful",
+  });
+
+  userModel.findOne({ email: params.email.toLowerCase() });
+};
+
 module.exports = {
   TestUser,
   SignUpUser,
+  Login,
 };
