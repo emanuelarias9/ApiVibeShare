@@ -21,9 +21,9 @@ const SignUpUser = async (req, res) => {
   try {
     ValidateBasicInfoUser(params);
   } catch (error) {
-    return res.status(400).json({
-      status: "Bad Request",
-      statusCode: 400,
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
       message: error.message,
     });
   }
@@ -31,9 +31,9 @@ const SignUpUser = async (req, res) => {
   try {
     await ValidateUserExists(params);
   } catch (error) {
-    return res.status(409).json({
-      status: "Conflict",
-      statusCode: 409,
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
       message: error.message,
     });
   }
@@ -64,30 +64,28 @@ const Login = async (req, res) => {
   try {
     ValidateLoginInfo(params);
   } catch (error) {
-    return res.status(400).json({
-      status: "Bad Request",
-      statusCode: 400,
-      message: error,
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
+      message: error.message,
     });
   }
 
   try {
     await ValidateLoginCredentials(params);
   } catch (error) {
-    return res.status(401).json({
-      status: "Unauthorized",
-      statusCode: 401,
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
       message: error.message,
     });
   }
 
-  return res.status(201).json({
+  return res.status(200).json({
     status: "OK",
     statusCode: 200,
     message: "Login successful",
   });
-
-  userModel.findOne({ email: params.email.toLowerCase() });
 };
 
 module.exports = {
