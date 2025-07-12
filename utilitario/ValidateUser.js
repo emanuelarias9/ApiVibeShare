@@ -96,6 +96,8 @@ const ValidateLoginCredentials = async (params) => {
   if (password === false) {
     throw new Unauthorized("La contraseña es incorrecta");
   }
+
+  return user;
 };
 
 module.exports = {

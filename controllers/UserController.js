@@ -8,6 +8,7 @@ const {
   ValidateLoginInfo,
   ValidateLoginCredentials,
 } = require("../utilitario/ValidateUser");
+const jwt = require("../utilitario/jwt");
 
 const TestUser = (req, res) => {
   res.status(200).send({
@@ -17,7 +18,8 @@ const TestUser = (req, res) => {
 
 const SignUpUser = async (req, res) => {
   let params = req.body;
-
+  let passwordEncrypted;
+  let user;
   try {
     ValidateBasicInfoUser(params);
   } catch (error) {
@@ -38,9 +40,9 @@ const SignUpUser = async (req, res) => {
     });
   }
 
-  let passwordEncrypted = await bcrypt.hash(params.password, 10);
+  passwordEncrypted = await bcrypt.hash(params.password, 10);
   params.password = passwordEncrypted;
-  let user = new userModel(params);
+  user = new userModel(params);
 
   userSaved = await user.save();
   if (!userSaved) {
@@ -60,6 +62,8 @@ const SignUpUser = async (req, res) => {
 
 const Login = async (req, res) => {
   let params = req.body;
+  let userlogged;
+  let token;
 
   try {
     ValidateLoginInfo(params);
@@ -72,7 +76,7 @@ const Login = async (req, res) => {
   }
 
   try {
-    await ValidateLoginCredentials(params);
+    userlogged = await ValidateLoginCredentials(params);
   } catch (error) {
     return res.status(error.statusCode).json({
       status: error.status,
@@ -81,10 +85,19 @@ const Login = async (req, res) => {
     });
   }
 
+  token = jwt.createToken(userlogged);
+
   return res.status(200).json({
     status: "OK",
     statusCode: 200,
     message: "Login successful",
+    user: {
+      nick: userlogged.nick,
+      role: userlogged.role,
+      email: userlogged.email,
+      username: userlogged.username,
+    },
+    token: token,
   });
 };
 
