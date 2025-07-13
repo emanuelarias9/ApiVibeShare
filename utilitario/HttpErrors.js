@@ -19,6 +19,12 @@ class Unauthorized extends HttpError {
   }
 }
 
+class Forbidden extends HttpError {
+  constructor(message = "Forbidden") {
+    super(message, 403);
+  }
+}
+
 class NotFound extends HttpError {
   constructor(message = "Not Found") {
     super(message, 404);
@@ -40,6 +46,7 @@ class InternalServerError extends HttpError {
 module.exports = {
   BadRequest,
   Unauthorized,
+  Forbidden,
   NotFound,
   Conflict,
   InternalServerError,

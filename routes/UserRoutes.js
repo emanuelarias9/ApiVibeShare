@@ -2,9 +2,10 @@ const express = require("express");
 const router = express.Router();
 const UserController = require("../controllers/UserController");
 const PostController = require("../controllers/PostController");
+const { authenticate } = require("../middlewares/auth");
 
 //Definir rutas
-router.get("TestUser", UserController.TestUser);
+router.get("/TestUser", authenticate, UserController.TestUser);
 router.post("/signup", UserController.SignUpUser);
 router.post("/login", UserController.Login);
 

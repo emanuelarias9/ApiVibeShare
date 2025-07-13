@@ -13,6 +13,7 @@ const jwt = require("../utilitario/jwt");
 const TestUser = (req, res) => {
   res.status(200).send({
     message: "Test user endpoint is working",
+    user: req.user,
   });
 };
 
