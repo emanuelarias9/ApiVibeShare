@@ -1,5 +1,5 @@
 const jwt = require("jwt-simple");
-const { Unauthorized } = require("../Utilitario/HttpErrors");
+const { Unauthorized } = require("../utilitario/HttpErrors");
 const moment = require("moment");
 const secret = process.env.SECRET;
 

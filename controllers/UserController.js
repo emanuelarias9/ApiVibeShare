@@ -7,7 +7,8 @@ const {
   ValidateUserExists,
   ValidateLoginInfo,
   ValidateLoginCredentials,
-} = require("../utilitario/ValidateUser");
+  GetUser,
+} = require("../services/UserService");
 const jwt = require("../utilitario/jwt");
 
 const TestUser = (req, res) => {
@@ -92,13 +93,27 @@ const Login = async (req, res) => {
     status: "OK",
     statusCode: 200,
     message: "Login successful",
-    user: {
-      nick: userlogged.nick,
-      role: userlogged.role,
-      email: userlogged.email,
-      username: userlogged.username,
-    },
     token: token,
+  });
+};
+
+const GetUserProfile = async (req, res) => {
+  let userId = req.params.userId;
+  let user;
+  try {
+    user = await GetUser(userId);
+  } catch (error) {
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
+      message: error.message,
+    });
+  }
+
+  return res.status(200).json({
+    status: "OK",
+    statusCode: 200,
+    user: user,
   });
 };
 
@@ -106,4 +121,5 @@ module.exports = {
   TestUser,
   SignUpUser,
   Login,
+  GetUserProfile,
 };

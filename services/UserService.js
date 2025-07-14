@@ -5,7 +5,7 @@ const {
   Conflict,
   NotFound,
   Unauthorized,
-} = require("./HttpErrors");
+} = require("../utilitario/HttpErrors");
 const bcrypt = require("bcrypt");
 
 const ValidateBasicInfoUser = (params) => {
@@ -100,9 +100,24 @@ const ValidateLoginCredentials = async (params) => {
   return user;
 };
 
+const GetUser = async (userId) => {
+  if (!userId || !validator.isMongoId(userId)) {
+    throw new BadRequest("El ID del usuario no es válido");
+  }
+  const user = await userModel
+    .findById(userId)
+    .select({ password: 0, role: 0 })
+    .exec();
+  if (!user) {
+    throw new NotFound("Usuario no encontrado");
+  }
+  return user;
+};
+
 module.exports = {
   ValidateBasicInfoUser,
   ValidateUserExists,
   ValidateLoginInfo,
   ValidateLoginCredentials,
+  GetUser,
 };

@@ -8,6 +8,7 @@ const { authenticate } = require("../middlewares/auth");
 router.get("/TestUser", authenticate, UserController.TestUser);
 router.post("/signup", UserController.SignUpUser);
 router.post("/login", UserController.Login);
+router.get("/Profile/:userId", authenticate, UserController.GetUserProfile);
 
 // Exportar el router
 module.exports = router;
