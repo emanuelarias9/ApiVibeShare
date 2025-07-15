@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const mongoosePaginate = require("mongoose-paginate-v2");
 /**
  * @swagger
  * components:
@@ -46,5 +47,7 @@ const UserSchema = new Schema({
   image: { type: String, default: "" },
   createdAt: { type: Date, default: Date.now },
 });
+
+UserSchema.plugin(mongoosePaginate);
 
 module.exports = model("User", UserSchema, "user");

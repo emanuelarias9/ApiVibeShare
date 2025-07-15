@@ -8,7 +8,6 @@ const {
   InternalServerError,
 } = require("../utilitario/HttpErrors");
 const bcrypt = require("bcrypt");
-const pagination = require("mongoose-pagination");
 
 const ValidateBasicInfoUser = (params) => {
   if (!params) {
@@ -117,11 +116,19 @@ const GetUserById = async (userId) => {
 };
 
 const GetAllUsers = async (page, pageSize) => {
-  let users = await userModel.find().sort("_id").paginate(page, pageSize);
-  if (!users) {
+  const options = {
+    page,
+    limit: pageSize,
+    sort: { _id: 1 },
+  };
+
+  let result = await userModel.paginate({}, options);
+
+  if (!result) {
     throw new InternalServerError("Error al obtener los usuarios");
   }
-  return users;
+
+  return result;
 };
 
 module.exports = {

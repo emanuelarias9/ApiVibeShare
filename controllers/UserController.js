@@ -135,10 +135,11 @@ const GetUsers = async (req, res) => {
   return res.status(200).json({
     status: "OK",
     statusCode: 200,
-    users: users,
-    page: page,
-    pageSize: pageSize,
-    totalUsers: users.length,
+    page: users.page,
+    pageSize: users.limit,
+    totalUsers: users.totalDocs,
+    totalPages: users.totalPages,
+    users: users.docs,
   });
 };
 
