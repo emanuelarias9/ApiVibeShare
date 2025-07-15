@@ -7,7 +7,8 @@ const {
   ValidateUserExists,
   ValidateLoginInfo,
   ValidateLoginCredentials,
-  GetUser,
+  GetUserById,
+  GetAllUsers,
 } = require("../services/UserService");
 const jwt = require("../utilitario/jwt");
 
@@ -101,7 +102,7 @@ const GetUserProfile = async (req, res) => {
   let userId = req.params.userId;
   let user;
   try {
-    user = await GetUser(userId);
+    user = await GetUserById(userId);
   } catch (error) {
     return res.status(error.statusCode).json({
       status: error.status,
@@ -117,9 +118,34 @@ const GetUserProfile = async (req, res) => {
   });
 };
 
+const GetUsers = async (req, res) => {
+  let page = parseInt(req.params.page || 1);
+  let pageSize = 5;
+  let users;
+  try {
+    users = await GetAllUsers(page, pageSize);
+  } catch (error) {
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
+      message: error.message,
+    });
+  }
+
+  return res.status(200).json({
+    status: "OK",
+    statusCode: 200,
+    users: users,
+    page: page,
+    pageSize: pageSize,
+    totalUsers: users.length,
+  });
+};
+
 module.exports = {
-  TestUser,
-  SignUpUser,
   Login,
+  TestUser,
+  GetUsers,
+  SignUpUser,
   GetUserProfile,
 };

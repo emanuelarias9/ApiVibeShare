@@ -5,8 +5,10 @@ const {
   Conflict,
   NotFound,
   Unauthorized,
+  InternalServerError,
 } = require("../utilitario/HttpErrors");
 const bcrypt = require("bcrypt");
+const pagination = require("mongoose-pagination");
 
 const ValidateBasicInfoUser = (params) => {
   if (!params) {
@@ -100,7 +102,7 @@ const ValidateLoginCredentials = async (params) => {
   return user;
 };
 
-const GetUser = async (userId) => {
+const GetUserById = async (userId) => {
   if (!userId || !validator.isMongoId(userId)) {
     throw new BadRequest("El ID del usuario no es válido");
   }
@@ -114,10 +116,19 @@ const GetUser = async (userId) => {
   return user;
 };
 
+const GetAllUsers = async (page, pageSize) => {
+  let users = await userModel.find().sort("_id").paginate(page, pageSize);
+  if (!users) {
+    throw new InternalServerError("Error al obtener los usuarios");
+  }
+  return users;
+};
+
 module.exports = {
   ValidateBasicInfoUser,
   ValidateUserExists,
   ValidateLoginInfo,
   ValidateLoginCredentials,
-  GetUser,
+  GetUserById,
+  GetAllUsers,
 };
