@@ -153,6 +153,10 @@ const UpdateUserInfo = async (userId, infoUpdate) => {
     infoUpdate.password = passwordEncrypted;
   }
 
+  if (infoUpdate.email && !validator.isEmail(infoUpdate.email.trim())) {
+    throw new BadRequest("El email no es válido");
+  }
+
   infoUpdate.updatedAt = Date.now();
 
   updatedUser = await userModel

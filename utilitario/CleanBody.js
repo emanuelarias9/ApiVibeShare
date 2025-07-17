@@ -9,9 +9,17 @@
  */
 function CleanBody(obj) {
   return Object.fromEntries(
-    Object.entries(obj).filter(
-      ([_, value]) => value !== "" && value !== null && value !== undefined
-    )
+    Object.entries(obj)
+      .filter(
+        ([_, value]) =>
+          value.trim() !== "" && value !== null && value !== undefined
+      )
+      .map(([key, value]) => {
+        if (typeof value === "string") {
+          return [key, value.trim()];
+        }
+        return [key, value];
+      })
   );
 }
 
