@@ -35,6 +35,8 @@ const SignUpUser = async (req, res) => {
     });
   }
 
+  params.email = params.email.toLowerCase();
+  params.username = params.username.toLowerCase();
   try {
     await ValidateUserExists(params);
   } catch (error) {
@@ -47,6 +49,7 @@ const SignUpUser = async (req, res) => {
 
   passwordEncrypted = await bcrypt.hash(params.password, 10);
   params.password = passwordEncrypted;
+
   user = new userModel(params);
 
   userSaved = await user.save();

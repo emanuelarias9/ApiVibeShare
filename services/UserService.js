@@ -55,13 +55,18 @@ const ValidateUserExists = async (params) => {
   if (params.username) {
     username = params.username.toLowerCase();
   }
+
   const userExists = await userModel
     .findOne({
       $or: [{ email }, { username }],
     })
     .exec();
 
+  console.log("params:", email, username);
+  console.log("userExists:", userExists);
+
   if (userExists && userExists.email === email) {
+    console.log("userExists:", userExists.email, "email", email);
     throw new Conflict(`El email ${email} ya está registrado`);
   }
 
@@ -153,8 +158,15 @@ const UpdateUserInfo = async (userId, infoUpdate) => {
     infoUpdate.password = passwordEncrypted;
   }
 
-  if (infoUpdate.email && !validator.isEmail(infoUpdate.email.trim())) {
-    throw new BadRequest("El email no es válido");
+  if (infoUpdate.email) {
+    infoUpdate.email = infoUpdate.email.toLowerCase();
+    if (!validator.isEmail(infoUpdate.email.trim())) {
+      throw new BadRequest("El email no es válido");
+    }
+  }
+
+  if (infoUpdate.username) {
+    infoUpdate.username = infoUpdate.username.toLowerCase();
   }
 
   infoUpdate.updatedAt = Date.now();
