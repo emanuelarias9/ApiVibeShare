@@ -9,7 +9,7 @@ const createToken = (user) => {
     email: user.email,
     role: user.role,
     image: user.image,
-    iat: moment().unix(),
+    iat: moment().unix(), // Issued at time
     exp: moment().add(1, "days").unix(),
   };
   return jwt.encode(payload, process.env.SECRET);

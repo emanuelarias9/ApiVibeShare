@@ -41,11 +41,13 @@ const mongoosePaginate = require("mongoose-paginate-v2");
 const UserSchema = new Schema({
   username: { type: String, required: true },
   nick: { type: String, required: true },
+  bio: { type: String, default: "" },
   email: { type: String, required: true },
   password: { type: String, required: true },
   role: { type: String, default: "user" },
   image: { type: String, default: "" },
   createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 
 UserSchema.plugin(mongoosePaginate);

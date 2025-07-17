@@ -46,9 +46,15 @@ const ValidateBasicInfoUser = (params) => {
 };
 
 const ValidateUserExists = async (params) => {
-  const email = params.email.toLowerCase();
-  const username = params.username.toLowerCase();
+  let email;
+  let username;
+  if (params.email) {
+    email = params.email.toLowerCase();
+  }
 
+  if (params.username) {
+    username = params.username.toLowerCase();
+  }
   const userExists = await userModel
     .findOne({
       $or: [{ email }, { username }],
@@ -131,6 +137,33 @@ const GetAllUsers = async (page, pageSize) => {
   return result;
 };
 
+const UpdateUserInfo = async (userId, infoUpdate) => {
+  let updatedUser;
+  delete infoUpdate.iat;
+  delete infoUpdate.exp;
+  delete infoUpdate.role;
+  delete infoUpdate.image;
+
+  if (!userId || !validator.isMongoId(userId)) {
+    throw new BadRequest("El ID del usuario no es válido");
+  }
+
+  if (infoUpdate.password) {
+    passwordEncrypted = await bcrypt.hash(infoUpdate.password, 10);
+    infoUpdate.password = passwordEncrypted;
+  }
+
+  infoUpdate.updatedAt = Date.now();
+
+  updatedUser = await userModel
+    .findByIdAndUpdate(userId, infoUpdate, { new: true })
+    .exec();
+
+  if (!updatedUser) {
+    throw new NotFound("Usuario no encontrado para actualizar");
+  }
+};
+
 module.exports = {
   ValidateBasicInfoUser,
   ValidateUserExists,
@@ -138,4 +171,5 @@ module.exports = {
   ValidateLoginCredentials,
   GetUserById,
   GetAllUsers,
+  UpdateUserInfo,
 };

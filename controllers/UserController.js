@@ -9,8 +9,10 @@ const {
   ValidateLoginCredentials,
   GetUserById,
   GetAllUsers,
+  UpdateUserInfo,
 } = require("../services/UserService");
 const jwt = require("../utilitario/jwt");
+const CleanBody = require("../utilitario/CleanBody");
 
 const TestUser = (req, res) => {
   res.status(200).send({
@@ -59,7 +61,7 @@ const SignUpUser = async (req, res) => {
   return res.status(201).json({
     status: "Created",
     statusCode: 201,
-    user: userSaved,
+    message: `Usuario ${userSaved.username} registrado correctamente`,
   });
 };
 
@@ -143,10 +145,45 @@ const GetUsers = async (req, res) => {
   });
 };
 
+const UpdateUser = async (req, res) => {
+  let user = req.user;
+  let infoUpdate = CleanBody(req.body);
+  let updatedUser;
+
+  try {
+    await ValidateUserExists(infoUpdate);
+  } catch (error) {
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
+      message: error.message,
+    });
+  }
+
+  try {
+    updatedUser = await UpdateUserInfo(user.id, infoUpdate);
+  } catch (error) {
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
+      message: error.message,
+    });
+  }
+
+  return res.status(200).json({
+    status: "OK",
+    statusCode: 200,
+    updatedUser: updatedUser,
+    message: "User updated successfully",
+    infoUpdate: infoUpdate,
+  });
+};
+
 module.exports = {
   Login,
   TestUser,
   GetUsers,
   SignUpUser,
   GetUserProfile,
+  UpdateUser,
 };
