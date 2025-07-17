@@ -62,11 +62,7 @@ const ValidateUserExists = async (params) => {
     })
     .exec();
 
-  console.log("params:", email, username);
-  console.log("userExists:", userExists);
-
   if (userExists && userExists.email === email) {
-    console.log("userExists:", userExists.email, "email", email);
     throw new Conflict(`El email ${email} ya está registrado`);
   }
 
