@@ -37,6 +37,12 @@ class Conflict extends HttpError {
   }
 }
 
+class UnsupportedMediaType extends HttpError {
+  constructor(message = "Unsupported Media Type") {
+    super(message, 415);
+  }
+}
+
 class InternalServerError extends HttpError {
   constructor(message = "Internal Server Error") {
     super(message, 500);
@@ -50,4 +56,5 @@ module.exports = {
   NotFound,
   Conflict,
   InternalServerError,
+  UnsupportedMediaType,
 };

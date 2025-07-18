@@ -13,6 +13,7 @@ const {
 } = require("../services/UserService");
 const jwt = require("../utilitario/jwt");
 const CleanBody = require("../utilitario/CleanBody");
+const { ValidateImage, DeleteImage } = require("../utilitario/ValidateImage");
 
 const TestUser = (req, res) => {
   res.status(200).send({
@@ -183,6 +184,18 @@ const UpdateUser = async (req, res) => {
 };
 
 const UploadImage = (req, res) => {
+  let file = req.file;
+  let extension;
+  try {
+    extension = ValidateImage(file);
+  } catch (error) {
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
+      message: error.message,
+    });
+  }
+
   return res.status(200).json({
     status: "OK",
     statusCode: 200,
