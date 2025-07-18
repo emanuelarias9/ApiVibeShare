@@ -8,6 +8,7 @@ const {
   InternalServerError,
 } = require("../utilitario/HttpErrors");
 const bcrypt = require("bcrypt");
+const { DeleteImage } = require("../utilitario/ValidateImage");
 
 const ValidateBasicInfoUser = (params) => {
   if (!params) {
@@ -176,6 +177,24 @@ const UpdateUserInfo = async (userId, infoUpdate) => {
   }
 };
 
+const UpdateUserImage = async (userId, file) => {
+  let userImageUpdated;
+
+  if (!userId || !validator.isMongoId(userId)) {
+    throw new BadRequest("El ID del usuario no es válido");
+  }
+
+  userImageUpdated = await userModel
+    .findByIdAndUpdate(userId, { image: file.filename }, { new: false })
+    .exec();
+
+  if (!userImageUpdated) {
+    throw new NotFound("Usuario no encontrado para actualizar");
+  }
+
+  DeleteImage(userImageUpdated.image);
+};
+
 module.exports = {
   ValidateBasicInfoUser,
   ValidateUserExists,
@@ -184,4 +203,5 @@ module.exports = {
   GetUserById,
   GetAllUsers,
   UpdateUserInfo,
+  UpdateUserImage,
 };

@@ -1,8 +1,6 @@
 const fs = require("fs");
 const {
   BadRequest,
-  NotFound,
-  InternalServerError,
   UnsupportedMediaType,
 } = require("../utilitario/HttpErrors");
 
@@ -22,12 +20,12 @@ const ValidateImage = (file) => {
         validExtensions.join(", ")
     );
   }
-  return extension;
 };
 
 const DeleteImage = (image) => {
-  if (fs.existsSync(image.path) && image.filename !== "default.png") {
-    fs.unlinkSync(image.path);
+  let path = `./uploads/users/avatars/${image}`;
+  if (fs.existsSync(path) && image !== "default.png") {
+    fs.unlinkSync(path);
   }
 };
 module.exports = { ValidateImage, DeleteImage };

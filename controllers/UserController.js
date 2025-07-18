@@ -10,10 +10,11 @@ const {
   GetUserById,
   GetAllUsers,
   UpdateUserInfo,
+  UpdateUserImage,
 } = require("../services/UserService");
 const jwt = require("../utilitario/jwt");
 const CleanBody = require("../utilitario/CleanBody");
-const { ValidateImage, DeleteImage } = require("../utilitario/ValidateImage");
+const { ValidateImage } = require("../utilitario/ValidateImage");
 
 const TestUser = (req, res) => {
   res.status(200).send({
@@ -185,9 +186,19 @@ const UpdateUser = async (req, res) => {
 
 const UploadImage = (req, res) => {
   let file = req.file;
-  let extension;
+
   try {
-    extension = ValidateImage(file);
+    ValidateImage(file);
+  } catch (error) {
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
+      message: error.message,
+    });
+  }
+
+  try {
+    UpdateUserImage(req.user.id, file);
   } catch (error) {
     return res.status(error.statusCode).json({
       status: error.status,
@@ -200,7 +211,7 @@ const UploadImage = (req, res) => {
     status: "OK",
     statusCode: 200,
     message: "File uploaded successfully",
-    file: req.file,
+    file: file.filename,
   });
 };
 
