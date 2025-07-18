@@ -182,6 +182,15 @@ const UpdateUser = async (req, res) => {
   });
 };
 
+const UploadImage = (req, res) => {
+  return res.status(200).json({
+    status: "OK",
+    statusCode: 200,
+    message: "File uploaded successfully",
+    file: req.file,
+  });
+};
+
 module.exports = {
   Login,
   TestUser,
@@ -189,4 +198,5 @@ module.exports = {
   SignUpUser,
   GetUserProfile,
   UpdateUser,
+  UploadImage,
 };
