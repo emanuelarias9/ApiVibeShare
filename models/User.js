@@ -6,36 +6,51 @@ const mongoosePaginate = require("mongoose-paginate-v2");
  *   schemas:
  *     User:
  *       type: object
- *       required:
- *         - username
- *         - nick
- *         - email
- *         - password
  *       properties:
+ *         _id:
+ *           type: string
+ *           description: ID único generado por MongoDB.
+ *           example: "64f19c0b6b2f2c3e3a1e8d41"
  *         username:
  *           type: string
- *           example: "johndoe"
+ *           description: Nombre de usuario único.
+ *           example: "emanuelarias"
  *         nick:
  *           type: string
- *           example: "johnny"
+ *           description: Apodo del usuario.
+ *           example: "EmaDev"
+ *         bio:
+ *           type: string
+ *           description: Biografía del usuario.
+ *           example: "Desarrollador full-stack apasionado por el código limpio."
  *         email:
  *           type: string
  *           format: email
- *           example: "john@example.com"
+ *           description: Correo electrónico del usuario.
+ *           example: "ema@correo.com"
  *         password:
  *           type: string
  *           format: password
- *           example: "StrongPassword123"
+ *           description: Contraseña hasheada del usuario.
+ *           example: "$2b$10$Mdoz8o9ybnt2aZW/ADe/d.hrHz..."
  *         role:
  *           type: string
+ *           description: Rol del usuario (por defecto es "user").
  *           example: "user"
  *         image:
  *           type: string
- *           example: "profile.jpg"
+ *           description: Nombre del archivo de imagen del perfil.
+ *           example: "default.png"
  *         createdAt:
  *           type: string
  *           format: date-time
- *           example: "2024-01-01T12:00:00Z"
+ *           description: Fecha de creación del usuario.
+ *           example: "2024-07-15T20:45:30.000Z"
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *           description: Fecha de última actualización.
+ *           example: "2024-07-15T22:10:12.000Z"
  */
 
 const UserSchema = new Schema({
