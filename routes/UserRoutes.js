@@ -28,6 +28,6 @@ router.post(
   [authenticate, upload.single("image")],
   UserController.UploadImage
 );
-
+router.get("/avatar", authenticate, UserController.avatar);
 // Exportar el router
 module.exports = router;

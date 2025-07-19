@@ -11,6 +11,7 @@ const {
   GetAllUsers,
   UpdateUserInfo,
   UpdateUserImage,
+  GetUserAvatar,
 } = require("../services/UserService");
 const jwt = require("../utilitario/jwt");
 const CleanBody = require("../utilitario/CleanBody");
@@ -27,6 +28,7 @@ const SignUpUser = async (req, res) => {
   let params = req.body;
   let passwordEncrypted;
   let user;
+  let userSaved;
   try {
     ValidateBasicInfoUser(params);
   } catch (error) {
@@ -215,6 +217,21 @@ const UploadImage = (req, res) => {
   });
 };
 
+const avatar = async (req, res) => {
+  let avatar;
+  try {
+    avatar = await GetUserAvatar(req.user.id);
+  } catch (error) {
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
+      message: error.message,
+    });
+  }
+
+  return res.sendFile(avatar); // Send the image file directly
+};
+
 module.exports = {
   Login,
   TestUser,
@@ -223,4 +240,5 @@ module.exports = {
   GetUserProfile,
   UpdateUser,
   UploadImage,
+  avatar,
 };

@@ -1,5 +1,7 @@
+const fs = require("fs");
 const validator = require("validator");
 const userModel = require("../models/User");
+const path = require("path");
 const {
   BadRequest,
   Conflict,
@@ -97,7 +99,7 @@ const ValidateLoginCredentials = async (params) => {
   const email = params.email.toLowerCase();
   const user = await userModel.findOne({ email }).exec();
 
-  if (!user || user.length === 0) {
+  if (!user) {
     throw new NotFound("El usuario no existe");
   }
 
@@ -130,6 +132,7 @@ const GetAllUsers = async (page, pageSize) => {
     sort: { _id: 1 },
   };
 
+  // @ts-ignore
   let result = await userModel.paginate({}, options);
 
   if (!result) {
@@ -141,6 +144,7 @@ const GetAllUsers = async (page, pageSize) => {
 
 const UpdateUserInfo = async (userId, infoUpdate) => {
   let updatedUser;
+  let passwordEncrypted;
   delete infoUpdate.iat;
   delete infoUpdate.exp;
   delete infoUpdate.role;
@@ -195,6 +199,22 @@ const UpdateUserImage = async (userId, file) => {
   DeleteImage(userImageUpdated.image);
 };
 
+const GetUserAvatar = async (userId) => {
+  if (!userId || !validator.isMongoId(userId)) {
+    throw new BadRequest("El ID del usuario no es válido");
+  }
+
+  const user = await userModel.findById(userId).exec();
+
+  if (!user) {
+    throw new NotFound("Usuario no encontrado");
+  }
+
+  let filepath = path.resolve(`./uploads/users/avatars/${user.image}`);
+
+  return filepath;
+};
+
 module.exports = {
   ValidateBasicInfoUser,
   ValidateUserExists,
@@ -204,4 +224,5 @@ module.exports = {
   GetAllUsers,
   UpdateUserInfo,
   UpdateUserImage,
+  GetUserAvatar,
 };
