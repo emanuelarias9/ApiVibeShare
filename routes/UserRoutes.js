@@ -18,7 +18,58 @@ const upload = multer({ storage: storage });
 
 //Definir rutas
 router.get("/testUser", authenticate, UserController.TestUser);
+/**
+ * @swagger
+ * /user/signup:
+ *   post:
+ *     summary: Registrar un nuevo usuario
+ *     tags:
+ *       - Users
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       201:
+ *         description: Usuario creado correctamente
+ *       400:
+ *         description: Datos inválidos
+ *       409:
+ *         description: Usuario ya existe
+ */
 router.post("/signup", UserController.SignUpUser);
+
+/**
+ * @swagger
+ * /user/login:
+ *   post:
+ *     summary: Iniciar sesión de usuario
+ *     tags:
+ *       - Users
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "user@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "123456"
+ *     responses:
+ *       200:
+ *         description: Login exitoso
+ *       401:
+ *         description: Credenciales inválidas
+ */
 router.post("/login", UserController.Login);
 router.get("/profile/:userId", authenticate, UserController.GetUserProfile);
 router.get("/list{/:page}", authenticate, UserController.GetUsers);

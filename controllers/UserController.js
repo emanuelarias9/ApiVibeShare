@@ -24,6 +24,67 @@ const TestUser = (req, res) => {
   });
 };
 
+/**
+ * @swagger
+ * /user/register:
+ *   post:
+ *     summary: Registrar un nuevo usuario
+ *     tags:
+ *       - Users
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - nick
+ *               - email
+ *               - password
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: "emanuelarias"
+ *               nick:
+ *                 type: string
+ *                 example: "EmaDev"
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "ema@correo.com"
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: "12345678"
+ *               bio:
+ *                 type: string
+ *                 example: "Desarrollador full-stack"
+ *     responses:
+ *       201:
+ *         description: Usuario creado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: Created
+ *                 statusCode:
+ *                   type: integer
+ *                   example: 201
+ *                 message:
+ *                   type: string
+ *                   example: Usuario emanuelarias registrado correctamente
+ *       400:
+ *         description: Datos inválidos en la solicitud
+ *       409:
+ *         description: El usuario ya existe
+ *       500:
+ *         description: Error interno del servidor
+ */
+
 const SignUpUser = async (req, res) => {
   let params = req.body;
   let passwordEncrypted;
