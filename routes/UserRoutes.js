@@ -71,14 +71,130 @@ router.post("/signup", UserController.SignUpUser);
  *         description: Credenciales inválidas
  */
 router.post("/login", UserController.Login);
+
+/**
+ * @swagger
+ * /user/profile/{userId}:
+ *   get:
+ *     summary: Obtener perfil del usuario
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID del usuario
+ *     responses:
+ *       200:
+ *         description: Perfil del usuario obtenido correctamente
+ *       404:
+ *         description: Usuario no encontrado
+ */
 router.get("/profile/:userId", authenticate, UserController.GetUserProfile);
+
+/**
+ * @swagger
+ * /user/list:
+ *   get:
+ *     summary: Listar usuarios paginados
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Número de página
+ *     responses:
+ *       200:
+ *         description: Lista de usuarios paginada
+ */
 router.get("/list{/:page}", authenticate, UserController.GetUsers);
+
+/**
+ * @swagger
+ * /user/update:
+ *   put:
+ *     summary: Actualizar perfil del usuario
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *               nick:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               bio:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Usuario actualizado correctamente
+ *       400:
+ *         description: Datos inválidos
+ */
 router.put("/update", authenticate, UserController.UpdateUser);
+
+/**
+ * @swagger
+ * /user/updateImage:
+ *   post:
+ *     summary: Subir o actualizar imagen de perfil del usuario
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Imagen subida correctamente
+ */
 router.post(
   "/updateImage",
   [authenticate, upload.single("image")],
   UserController.UploadImage
 );
+
+/**
+ * @swagger
+ * /user/avatar:
+ *   get:
+ *     summary: Obtener imagen de perfil del usuario autenticado
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Imagen de perfil devuelta correctamente
+ *       404:
+ *         description: Imagen no encontrada
+ */
 router.get("/avatar", authenticate, UserController.avatar);
+
 // Exportar el router
 module.exports = router;
