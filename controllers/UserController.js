@@ -347,6 +347,69 @@ const GetUsers = async (req, res) => {
   });
 };
 
+/**
+ * @swagger
+ * /api/user/update:
+ *   put:
+ *     summary: Actualizar datos del usuario autenticado
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: "nuevoUsername"
+ *               nick:
+ *                 type: string
+ *                 example: "NuevoNick"
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "nuevo@email.com"
+ *               bio:
+ *                 type: string
+ *                 example: "Descripción actualizada"
+ *               updatedAt:
+ *                 type: integer
+ *                 example: 1752729792507
+ *     responses:
+ *       200:
+ *         description: Usuario actualizado correctamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 statusCode:
+ *                   type: integer
+ *                   example: 200
+ *                 updatedUser:
+ *                   $ref: '#/components/schemas/User'
+ *                 message:
+ *                   type: string
+ *                   example: User updated successfully
+ *                 infoUpdate:
+ *                   type: object
+ *       400:
+ *         description: Datos inválidos
+ *       409:
+ *         description: El usuario o email ya están registrados
+ *       401:
+ *         description: No autorizado. Token no válido o no enviado
+ *       500:
+ *         description: Error interno al actualizar el usuario
+ */
+
 const UpdateUser = async (req, res) => {
   let user = req.user;
   let infoUpdate = CleanBody(req.body);
