@@ -270,6 +270,58 @@ const GetUserProfile = async (req, res) => {
   });
 };
 
+/**
+ * @swagger
+ * /api/user/list/{page}:
+ *   get:
+ *     summary: Obtener listado paginado de usuarios
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Número de página (opcional, por defecto 1)
+ *     responses:
+ *       200:
+ *         description: Lista de usuarios obtenida exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 statusCode:
+ *                   type: integer
+ *                   example: 200
+ *                 page:
+ *                   type: integer
+ *                   example: 1
+ *                 pageSize:
+ *                   type: integer
+ *                   example: 5
+ *                 totalUsers:
+ *                   type: integer
+ *                   example: 24
+ *                 totalPages:
+ *                   type: integer
+ *                   example: 5
+ *                 users:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/User'
+ *       401:
+ *         description: No autorizado. Token inválido o ausente.
+ *       500:
+ *         description: Error al obtener usuarios
+ */
+
 const GetUsers = async (req, res) => {
   let page = parseInt(req.params.page || 1);
   let pageSize = 5;
