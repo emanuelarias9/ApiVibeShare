@@ -444,6 +444,54 @@ const UpdateUser = async (req, res) => {
   });
 };
 
+/**
+ * @swagger
+ * /api/user/updateImage:
+ *   post:
+ *     summary: Actualizar la imagen de perfil del usuario
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: Imagen a subir ("png", "jpg", "jpeg")
+ *     responses:
+ *       200:
+ *         description: Imagen actualizada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 statusCode:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: File uploaded successfully
+ *                 file:
+ *                   type: string
+ *                   example: imagen123.png
+ *       400:
+ *         description: Archivo inválido o faltante
+ *       401:
+ *         description: No autorizado. Token inválido o no enviado
+ *       500:
+ *         description: Error interno al subir la imagen
+ */
+
 const UploadImage = (req, res) => {
   let file = req.file;
 
