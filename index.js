@@ -24,6 +24,21 @@ const swaggerOptions = {
         "Documentación para la Api Rest de la red social VibeShare creada con NodeJS, expressJS y mongoose",
     },
     servers: [{ url: process.env.HOST_URL }],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+          description: "Introduce el token JWT en el formato: Bearer <token>",
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
   },
   apis: ["./routes/*.js", "./controllers/*.js", "./models/*.js"],
 };
