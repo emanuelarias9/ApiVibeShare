@@ -17,16 +17,9 @@ const jwt = require("../utilitario/jwt");
 const CleanBody = require("../utilitario/CleanBody");
 const { ValidateImage } = require("../utilitario/ValidateImage");
 
-const TestUser = (req, res) => {
-  res.status(200).send({
-    message: "Test user endpoint is working",
-    user: req.user,
-  });
-};
-
 /**
  * @swagger
- * /user/register:
+ * /api/user/signup:
  *   post:
  *     summary: Registrar un nuevo usuario
  *     tags:
@@ -133,6 +126,57 @@ const SignUpUser = async (req, res) => {
   });
 };
 
+/**
+ * @swagger
+ * /api/user/login:
+ *   post:
+ *     summary: Iniciar sesión de usuario
+ *     tags:
+ *       - Users
+ *     description: Valida las credenciales del usuario y devuelve un token JWT si el inicio de sesión es exitoso.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "ema@correo.com"
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: "12345678"
+ *     responses:
+ *       200:
+ *         description: Login exitoso. Devuelve un token JWT.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 statusCode:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Login successful
+ *                 token:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *       400:
+ *         description: Parámetros de entrada inválidos
+ *       401:
+ *         description: Credenciales incorrectas
+ */
 const Login = async (req, res) => {
   let params = req.body;
   let userlogged;
@@ -295,7 +339,6 @@ const avatar = async (req, res) => {
 
 module.exports = {
   Login,
-  TestUser,
   GetUsers,
   SignUpUser,
   GetUserProfile,
