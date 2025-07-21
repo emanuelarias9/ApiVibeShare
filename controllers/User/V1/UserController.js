@@ -1,6 +1,6 @@
 //importar dependencias
 /** @type {import("mongoose").Model} */
-const userModel = require("../models/User");
+const userModel = require("../../../models/User");
 const bcrypt = require("bcrypt");
 const {
   ValidateBasicInfoUser,
@@ -12,14 +12,14 @@ const {
   UpdateUserInfo,
   UpdateUserImage,
   GetUserAvatar,
-} = require("../services/UserService");
-const jwt = require("../utilitario/jwt");
-const CleanBody = require("../utilitario/CleanBody");
-const { ValidateImage } = require("../utilitario/ValidateImage");
+} = require("../../../services/UserService");
+const jwt = require("../../../utilitario/jwt");
+const CleanBody = require("../../../utilitario/CleanBody");
+const { ValidateImage } = require("../../../utilitario/ValidateImage");
 
 /**
  * @swagger
- * /api/user/signup:
+ * /api/v1/user/signup:
  *   post:
  *     summary: Registrar un nuevo usuario
  *     tags:
@@ -128,7 +128,7 @@ const SignUpUser = async (req, res) => {
 
 /**
  * @swagger
- * /api/user/login:
+ * /api/v1/user/login:
  *   post:
  *     summary: Iniciar sesión de usuario
  *     tags:
@@ -214,7 +214,7 @@ const Login = async (req, res) => {
 
 /**
  * @swagger
- * /api/user/profile/{id}:
+ * /api/v1/user/profile/{id}:
  *   get:
  *     summary: Obtener el perfil de un usuario por ID
  *     tags:
@@ -272,7 +272,7 @@ const GetUserProfile = async (req, res) => {
 
 /**
  * @swagger
- * /api/user/list/{page}:
+ * /api/v1/user/list/{page}:
  *   get:
  *     summary: Obtener listado paginado de usuarios
  *     tags:
@@ -349,7 +349,7 @@ const GetUsers = async (req, res) => {
 
 /**
  * @swagger
- * /api/user/update:
+ * /api/v1/user/update:
  *   put:
  *     summary: Actualizar datos del usuario autenticado
  *     tags:
@@ -446,7 +446,7 @@ const UpdateUser = async (req, res) => {
 
 /**
  * @swagger
- * /api/user/updateImage:
+ * /api/v1/user/updateImage:
  *   post:
  *     summary: Actualizar la imagen de perfil del usuario
  *     tags:
@@ -524,7 +524,7 @@ const UploadImage = (req, res) => {
 
 /**
  * @swagger
- * /api/user/avatar:
+ * /api/v1/user/avatar:
  *   get:
  *     summary: Obtener la imagen de perfil del usuario autenticado
  *     tags:

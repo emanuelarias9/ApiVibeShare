@@ -1,9 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-const UserController = require("../controllers/UserController");
-const PostController = require("../controllers/PostController");
-const { authenticate } = require("../middlewares/auth");
+const UserController = require("../../../controllers/User/V1/UserController");
+const { authenticate } = require("../../../middlewares/auth");
 
 // Configuración de multer para manejar la subida de imágenes
 const storage = multer.diskStorage({

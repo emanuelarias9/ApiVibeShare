@@ -58,13 +58,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 // Rutas de la API
-const UserRoutes = require("./routes/UserRoutes");
-const PostRoutes = require("./routes/PostRoutes");
-const FollowRoutes = require("./routes/FollowRoutes");
+const UserRoutesV1 = require("./routes/User/V1/UserRoutes");
+const PostRoutesV1 = require("./routes/Post/V1/PostRoutes");
+const FollowRoutesV1 = require("./routes/Follow/V1/FollowRoutes");
 
-app.use(`${process.env.URL_API_BASE}/user`, UserRoutes);
-app.use(`${process.env.URL_API_BASE}/post`, PostRoutes);
-app.use(`${process.env.URL_API_BASE}/follow`, FollowRoutes);
+app.use(`${process.env.URL_API_BASE}/v1/user`, UserRoutesV1);
+app.use(`${process.env.URL_API_BASE}/v1/post`, PostRoutesV1);
+app.use(`${process.env.URL_API_BASE}/v1/follow`, FollowRoutesV1);
 
 // Iniciar servidor y escuchar rutas
 app.listen(port, () => {
