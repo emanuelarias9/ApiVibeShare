@@ -23,7 +23,7 @@ const { ValidateImage } = require("../utilitario/ValidateImage");
  *   post:
  *     summary: Registrar un nuevo usuario
  *     tags:
- *       - Users
+ *       - User
  *     requestBody:
  *       required: true
  *       content:
@@ -132,7 +132,7 @@ const SignUpUser = async (req, res) => {
  *   post:
  *     summary: Iniciar sesión de usuario
  *     tags:
- *       - Users
+ *       - User
  *     description: Valida las credenciales del usuario y devuelve un token JWT si el inicio de sesión es exitoso.
  *     requestBody:
  *       required: true
@@ -218,7 +218,7 @@ const Login = async (req, res) => {
  *   get:
  *     summary: Obtener el perfil de un usuario por ID
  *     tags:
- *       - Users
+ *       - User
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -276,7 +276,7 @@ const GetUserProfile = async (req, res) => {
  *   get:
  *     summary: Obtener listado paginado de usuarios
  *     tags:
- *       - Users
+ *       - User
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -353,7 +353,7 @@ const GetUsers = async (req, res) => {
  *   put:
  *     summary: Actualizar datos del usuario autenticado
  *     tags:
- *       - Users
+ *       - User
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -450,7 +450,7 @@ const UpdateUser = async (req, res) => {
  *   post:
  *     summary: Actualizar la imagen de perfil del usuario
  *     tags:
- *       - Users
+ *       - User
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -491,7 +491,6 @@ const UpdateUser = async (req, res) => {
  *       500:
  *         description: Error interno al subir la imagen
  */
-
 const UploadImage = (req, res) => {
   let file = req.file;
 
@@ -522,6 +521,35 @@ const UploadImage = (req, res) => {
     file: file.filename,
   });
 };
+
+/**
+ * @swagger
+ * /api/user/avatar:
+ *   get:
+ *     summary: Obtener la imagen de perfil del usuario autenticado
+ *     tags:
+ *       - User
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Imagen devuelta exitosamente
+ *         content:
+ *           image/png:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *           image/jpeg:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       401:
+ *         description: No autorizado. Token inválido o ausente
+ *       404:
+ *         description: Imagen no encontrada
+ *       500:
+ *         description: Error interno al obtener el avatar
+ */
 
 const avatar = async (req, res) => {
   let avatar;
