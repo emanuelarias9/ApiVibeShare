@@ -212,8 +212,46 @@ const Login = async (req, res) => {
   });
 };
 
+/**
+ * @swagger
+ * /api/user/profile/{id}:
+ *   get:
+ *     summary: Obtener el perfil de un usuario por ID
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del usuario
+ *     responses:
+ *       200:
+ *         description: Perfil del usuario obtenido exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 statusCode:
+ *                   type: integer
+ *                   example: 200
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
+ *       404:
+ *         description: Usuario no encontrado
+ *       401:
+ *         description: Token no válido o no enviado
+ */
+
 const GetUserProfile = async (req, res) => {
-  let userId = req.params.userId;
+  let userId = req.params.id;
   let user;
   try {
     user = await GetUserById(userId);
