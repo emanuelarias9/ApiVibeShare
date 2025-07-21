@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const FollowController = require("../controllers/FollowController");
+const PostController = require("../../../controllers/Post/V1/PostController");
 
 //Definir rutas
-router.get("TestFollow", FollowController.TestFollow);
+router.get("TestPost", PostController.TestPost);
 
 // Exportar el router
 module.exports = router;
