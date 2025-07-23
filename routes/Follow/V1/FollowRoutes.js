@@ -5,6 +5,6 @@ const { authenticate } = require("../../../middlewares/auth");
 
 //Definir rutas
 router.post("/followUser", authenticate, FollowController.Follow);
-
+router.delete("/unfollowUser/:id", authenticate, FollowController.unfollow);
 // Exportar el router
 module.exports = router;
