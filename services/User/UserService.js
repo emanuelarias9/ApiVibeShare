@@ -1,6 +1,6 @@
 const fs = require("fs");
 const validator = require("validator");
-const userModel = require("../models/User");
+const userModel = require("../../models/User");
 const path = require("path");
 const {
   BadRequest,
@@ -8,9 +8,9 @@ const {
   NotFound,
   Unauthorized,
   InternalServerError,
-} = require("../utilitario/HttpErrors");
+} = require("../../utilitario/HttpErrors");
 const bcrypt = require("bcrypt");
-const { DeleteImage } = require("../utilitario/ValidateImage");
+const { DeleteImage } = require("../../utilitario/ValidateImage");
 
 const ValidateBasicInfoUser = (params) => {
   if (!params) {

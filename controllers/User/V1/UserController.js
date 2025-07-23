@@ -12,7 +12,7 @@ const {
   UpdateUserInfo,
   UpdateUserImage,
   GetUserAvatar,
-} = require("../../../services/UserService");
+} = require("../../../services/User/UserService");
 const jwt = require("../../../utilitario/jwt");
 const CleanBody = require("../../../utilitario/CleanBody");
 const { ValidateImage } = require("../../../utilitario/ValidateImage");
