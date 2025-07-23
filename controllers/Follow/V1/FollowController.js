@@ -1,21 +1,29 @@
 const followModel = require("../../../models/Follow");
 const userModel = require("../../../models/User");
+const { FollowUser } = require("../../../services/Follow/FollowService");
+const Follow = async (req, res) => {
+  const params = req.body;
+  const userLogged = req.user;
+  let followSaved;
 
-const TestFollow = (req, res) => {
-  res.status(200).send({
-    message: "Test follow endpoint is working",
-  });
-};
+  try {
+    followSaved = await FollowUser(params.followed, userLogged.id);
+  } catch (error) {
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
+      message: error.message,
+    });
+  }
 
-const Follow = (req, res) => {
-  res.status(200).send({
+  res.status(200).json({
     status: "OK",
     statusCode: 200,
-    message: "Test follow endpoint is working",
+    message: "Usuario seguido correctamente",
+    followSaved,
   });
 };
 
 module.exports = {
-  TestFollow,
   Follow,
 };

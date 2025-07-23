@@ -4,8 +4,7 @@ const FollowController = require("../../../controllers/Follow/V1/FollowControlle
 const { authenticate } = require("../../../middlewares/auth");
 
 //Definir rutas
-router.get("TestFollow", FollowController.TestFollow);
-router.post("follow", FollowController.Follow);
+router.post("/followUser", authenticate, FollowController.Follow);
 
 // Exportar el router
 module.exports = router;

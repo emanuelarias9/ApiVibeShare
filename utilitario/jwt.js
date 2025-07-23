@@ -4,6 +4,7 @@ const moment = require("moment");
 const createToken = (user) => {
   const payload = {
     id: user._id,
+    username: user.username,
     role: user.role,
     iat: moment().unix(), // Issued at time
     exp: moment().add(1, "days").unix(),
