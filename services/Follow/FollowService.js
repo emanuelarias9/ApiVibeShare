@@ -2,17 +2,58 @@ const {
   InternalServerError,
   BadRequest,
   Conflict,
+  NotFound,
 } = require("../../utilitario/HttpErrors");
 const followModel = require("../../models/Follow");
 const validator = require("validator");
 
 const FollowUser = async (followedId, userLoggedId) => {
+  let followExists = await ValidateFollow(followedId, userLoggedId);
+
+  if (followExists) {
+    throw new Conflict(`ya sigues a este usuario`);
+  }
+
+  const userFollowed = new followModel({
+    user: userLoggedId,
+    followed: followedId,
+  });
+
+  await userFollowed.save();
+
+  if (!userFollowed) {
+    throw new InternalServerError("Error al registrar el seguimiento");
+  }
+
+  return userFollowed;
+};
+
+const UnfollowUser = async (followedId, userLoggedId) => {
+  let followExists = await ValidateFollow(followedId, userLoggedId);
+
+  if (!followExists) {
+    throw new NotFound(`No sigues a este usuario`);
+  }
+
+  const userUnfollowed = await followModel.findOneAndDelete({
+    user: userLoggedId,
+    followed: followedId,
+  });
+
+  if (!userUnfollowed) {
+    throw new InternalServerError("Error al eliminar el seguimiento");
+  }
+
+  return userUnfollowed;
+};
+
+const ValidateFollow = async (followedId, userLoggedId) => {
   if (!followedId || !validator.isMongoId(followedId)) {
-    throw new BadRequest("El ID del usuario a seguir no es válido");
+    throw new BadRequest("El ID del usuario no es válido: followedId");
   }
 
   if (!userLoggedId || !validator.isMongoId(userLoggedId)) {
-    throw new BadRequest("El ID del usuario no es válido");
+    throw new BadRequest("El ID del usuario no es válido: userLoggedId");
   }
 
   const followExists = await followModel
@@ -21,24 +62,10 @@ const FollowUser = async (followedId, userLoggedId) => {
     })
     .exec();
 
-  if (followExists) {
-    throw new Conflict(`ya sigues a este usuario`);
-  }
-
-  const userToFollow = new followModel({
-    user: userLoggedId,
-    followed: followedId,
-  });
-
-  await userToFollow.save();
-
-  if (!userToFollow) {
-    throw new InternalServerError("Error al registrar el seguimiento");
-  }
-
-  return userToFollow;
+  return followExists;
 };
 
 module.exports = {
   FollowUser,
+  UnfollowUser,
 };
