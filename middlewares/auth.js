@@ -4,7 +4,11 @@ const moment = require("moment");
 const secret = process.env.SECRET;
 
 const authenticate = (req, res, next) => {
-  if (!req.headers.authorization) {
+  let authHeader = req.headers.authorization;
+  let payload;
+  let token;
+
+  if (!authHeader) {
     let httpError = new Unauthorized(
       "No se encontró la cabecera de autenticación."
     );
@@ -15,10 +19,14 @@ const authenticate = (req, res, next) => {
     });
   }
 
-  let token = req.headers.authorization.replace(/['"]+/g, "");
+  token = authHeader.startsWith("Bearer ")
+    ? authHeader.split(" ")[1]
+    : authHeader;
+
+  token = token.trim().replace(/^"(.*)"$/, "$1");
 
   try {
-    let payload = jwt.decode(token, secret);
+    payload = jwt.decode(token, secret);
     req.user = payload;
   } catch (error) {
     let isExpired = error.message.toLowerCase().includes("token expired");
