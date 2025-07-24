@@ -3,6 +3,7 @@ const userModel = require("../../../models/User");
 const {
   FollowUser,
   UnfollowUser,
+  FollowingList,
 } = require("../../../services/Follow/FollowService");
 
 const Follow = async (req, res) => {
@@ -28,13 +29,12 @@ const Follow = async (req, res) => {
   });
 };
 
-const unfollow = async (req, res) => {
-  let userUnfollowed;
+const Unfollow = async (req, res) => {
   const followedId = req.params.id;
   const userLoggedId = req.user.id;
 
   try {
-    userUnfollowed = await UnfollowUser(followedId, userLoggedId);
+    await UnfollowUser(followedId, userLoggedId);
   } catch (error) {
     return res.status(error.statusCode).json({
       status: error.status,
@@ -50,7 +50,31 @@ const unfollow = async (req, res) => {
   });
 };
 
+const Following = async (req, res) => {
+  let followingList;
+  try {
+    followingList = await FollowingList(req.params, req.user.id);
+  } catch (error) {
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
+      message: error.message,
+    });
+  }
+  res.status(200).json({
+    status: "OK",
+    statusCode: 200,
+    message: "Listado de usuarios a los que sigues",
+    page: followingList.page,
+    pageSize: followingList.limit,
+    totalUsers: followingList.totalDocs,
+    totalPages: followingList.totalPages,
+    following: followingList.docs,
+  });
+};
+
 module.exports = {
   Follow,
-  unfollow,
+  Unfollow,
+  Following,
 };

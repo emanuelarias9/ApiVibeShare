@@ -5,6 +5,11 @@ const { authenticate } = require("../../../middlewares/auth");
 
 //Definir rutas
 router.post("/followUser", authenticate, FollowController.Follow);
-router.delete("/unfollowUser/:id", authenticate, FollowController.unfollow);
+router.delete("/unfollowUser/:id", authenticate, FollowController.Unfollow);
+router.get(
+  "/following{/:page}{/:id}",
+  authenticate,
+  FollowController.Following
+);
 // Exportar el router
 module.exports = router;

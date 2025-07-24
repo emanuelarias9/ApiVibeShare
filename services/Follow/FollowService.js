@@ -65,7 +65,31 @@ const ValidateFollow = async (followedId, userLoggedId) => {
   return followExists;
 };
 
+const FollowingList = async (params, userId) => {
+  let page = parseInt(params.page || 1);
+  userId = params.id || userId;
+  const pageSize = 5;
+  let followingList;
+
+  const options = {
+    page,
+    limit: pageSize,
+    sort: { _id: 1 },
+    populate: ["user", "followed"],
+  };
+
+  if (!userId || !validator.isMongoId(userId)) {
+    throw new BadRequest("El ID del usuario no es válido");
+  }
+
+  // @ts-ignore
+  followingList = await followModel.paginate({ user: userId }, options);
+
+  return followingList;
+};
+
 module.exports = {
   FollowUser,
   UnfollowUser,
+  FollowingList,
 };
