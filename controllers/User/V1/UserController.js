@@ -147,7 +147,7 @@ const SignUpUser = async (req, res) => {
  *               email:
  *                 type: string
  *                 format: email
- *                 example: "ema@correo.com"
+ *                 example: "user@correo.com"
  *               password:
  *                 type: string
  *                 format: password
