@@ -75,7 +75,16 @@ const FollowingList = async (params, userId) => {
     page,
     limit: pageSize,
     sort: { _id: 1 },
-    populate: ["user", "followed"],
+    populate: [
+      {
+        path: "user",
+        select: "username nick email image",
+      },
+      {
+        path: "followed",
+        select: "username nick email image",
+      },
+    ],
   };
 
   if (!userId || !validator.isMongoId(userId)) {
