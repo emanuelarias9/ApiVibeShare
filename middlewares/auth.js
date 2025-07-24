@@ -5,11 +5,10 @@ const secret = process.env.SECRET;
 
 const authenticate = (req, res, next) => {
   let authHeader = req.headers.authorization;
-  let payload;
-  let token;
+  let httpError, payload, token, expired, now;
 
   if (!authHeader) {
-    let httpError = new Unauthorized(
+    httpError = new Unauthorized(
       "No se encontró la cabecera de autenticación."
     );
     return res.status(httpError.statusCode).json({
@@ -26,15 +25,21 @@ const authenticate = (req, res, next) => {
   token = token.trim().replace(/^"(.*)"$/, "$1");
 
   try {
+    expired = jwt.decode(token, secret, true);
+    now = moment().unix();
+    if (expired.exp < now) {
+      httpError = new Unauthorized("El token ha expirado.");
+      return res.status(httpError.statusCode).json({
+        status: httpError.status,
+        statusCode: httpError.statusCode,
+        message: httpError.message,
+      });
+    }
+
     payload = jwt.decode(token, secret);
     req.user = payload;
   } catch (error) {
-    let isExpired = error.message.toLowerCase().includes("token expired");
-    let httpError = new Unauthorized(
-      isExpired
-        ? "El token ha expirado. Por favor, inicie sesión nuevamente"
-        : "Token inválido o mal formado."
-    );
+    httpError = new Unauthorized("Token inválido o mal formado.");
     return res.status(httpError.statusCode).json({
       status: httpError.status,
       statusCode: httpError.statusCode,
