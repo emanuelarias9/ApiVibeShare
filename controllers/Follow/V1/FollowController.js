@@ -51,9 +51,11 @@ const Unfollow = async (req, res) => {
 };
 
 const Following = async (req, res) => {
-  let followingList;
+  let followingList, followingListLoggedUser, followersListLoggedUser;
+
   try {
-    followingList = await FollowingList(req.params, req.user.id);
+    [followingList, followingListLoggedUser, followersListLoggedUser] =
+      await FollowingList(req.params, req.user.id);
   } catch (error) {
     return res.status(error.statusCode).json({
       status: error.status,
@@ -65,11 +67,27 @@ const Following = async (req, res) => {
     status: "OK",
     statusCode: 200,
     message: "Listado de usuarios a los que sigues",
-    page: followingList.page,
-    pageSize: followingList.limit,
-    totalUsers: followingList.totalDocs,
-    totalPages: followingList.totalPages,
-    following: followingList.docs,
+    following: {
+      page: followingList.page,
+      pageSize: followingList.limit,
+      totalUsers: followingList.totalDocs,
+      totalPages: followingList.totalPages,
+      following: followingList.docs,
+    },
+    followingLoggedUser: {
+      page: followingListLoggedUser.page,
+      pageSize: followingListLoggedUser.limit,
+      totalUsers: followingListLoggedUser.totalDocs,
+      totalPages: followingListLoggedUser.totalPages,
+      following: followingListLoggedUser.docs,
+    },
+    followersLoggedUser: {
+      page: followersListLoggedUser.page,
+      pageSize: followersListLoggedUser.limit,
+      totalUsers: followersListLoggedUser.totalDocs,
+      totalPages: followersListLoggedUser.totalPages,
+      followers: followersListLoggedUser.docs,
+    },
   });
 };
 

@@ -65,11 +65,13 @@ const ValidateFollow = async (followedId, userLoggedId) => {
   return followExists;
 };
 
-const FollowingList = async (params, userId) => {
+const FollowingList = async (params, userLoggedId) => {
   let page = parseInt(params.page || 1);
-  userId = params.id || userId;
+  let userId = params.id || userLoggedId;
   const pageSize = 5;
-  let followingList;
+  let followingList; //Listado de usuarios a los que sigue el usuario pasado en params
+  let followingLoggedUser; //Listado de usuarios a los que sigue el usuario logeado
+  let followersLoggedUser; //Listado de usuarios que siguen el usuario logeado
 
   const options = {
     page,
@@ -94,7 +96,53 @@ const FollowingList = async (params, userId) => {
   // @ts-ignore
   followingList = await followModel.paginate({ user: userId }, options);
 
-  return followingList;
+  followingLoggedUser = await followingListLoggedUser(
+    page,
+    pageSize,
+    userLoggedId
+  );
+
+  followersLoggedUser = await followersListLoggedUser(
+    page,
+    pageSize,
+    userLoggedId
+  );
+
+  return [followingList, followingLoggedUser, followersLoggedUser];
+};
+
+const followingListLoggedUser = async (page, pageSize, userLoggedId) => {
+  let followingLoggedUser;
+  const options = {
+    page,
+    limit: pageSize,
+    sort: { _id: 1 },
+    select: { followed: 1, _id: 0 },
+  };
+
+  // @ts-ignore
+  followingLoggedUser = await followModel.paginate(
+    { user: userLoggedId },
+    options
+  );
+  return followingLoggedUser;
+};
+
+const followersListLoggedUser = async (page, pageSize, userLoggedId) => {
+  let followersLoggedUser;
+  const options = {
+    page,
+    limit: pageSize,
+    sort: { _id: 1 },
+    select: { user: 1, _id: 0 },
+  };
+
+  // @ts-ignore
+  followersLoggedUser = await followModel.paginate(
+    { followed: userLoggedId },
+    options
+  );
+  return followersLoggedUser;
 };
 
 module.exports = {
