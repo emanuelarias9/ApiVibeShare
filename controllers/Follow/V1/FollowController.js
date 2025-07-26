@@ -74,20 +74,8 @@ const Following = async (req, res) => {
       totalPages: followingList.totalPages,
       following: followingList.docs,
     },
-    followingLoggedUser: {
-      page: followingListLoggedUser.page,
-      pageSize: followingListLoggedUser.limit,
-      totalUsers: followingListLoggedUser.totalDocs,
-      totalPages: followingListLoggedUser.totalPages,
-      following: followingListLoggedUser.docs,
-    },
-    followersLoggedUser: {
-      page: followersListLoggedUser.page,
-      pageSize: followersListLoggedUser.limit,
-      totalUsers: followersListLoggedUser.totalDocs,
-      totalPages: followersListLoggedUser.totalPages,
-      followers: followersListLoggedUser.docs,
-    },
+    followingLoggedUser: followingListLoggedUser,
+    followersLoggedUser: followersListLoggedUser,
   });
 };
 

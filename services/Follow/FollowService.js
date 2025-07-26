@@ -96,53 +96,45 @@ const FollowingList = async (params, userLoggedId) => {
   // @ts-ignore
   followingList = await followModel.paginate({ user: userId }, options);
 
-  followingLoggedUser = await followingListLoggedUser(
-    page,
-    pageSize,
-    userLoggedId
-  );
+  followingLoggedUser = await followingListLoggedUser(userLoggedId);
 
-  followersLoggedUser = await followersListLoggedUser(
-    page,
-    pageSize,
-    userLoggedId
-  );
+  followersLoggedUser = await followersListLoggedUser(userLoggedId);
 
   return [followingList, followingLoggedUser, followersLoggedUser];
 };
 
-const followingListLoggedUser = async (page, pageSize, userLoggedId) => {
-  let followingLoggedUser;
-  const options = {
-    page,
-    limit: pageSize,
-    sort: { _id: 1 },
-    select: { followed: 1, _id: 0 },
-  };
+const followingListLoggedUser = async (userLoggedId) => {
+  let following;
+  let followingClean = [];
 
   // @ts-ignore
-  followingLoggedUser = await followModel.paginate(
-    { user: userLoggedId },
-    options
-  );
-  return followingLoggedUser;
+  following = await followModel
+    .find({ user: userLoggedId })
+    .select({ followed: 1, _id: 0 })
+    .exec();
+
+  following.forEach((follow) => {
+    followingClean.push(follow.followed);
+  });
+
+  return followingClean;
 };
 
-const followersListLoggedUser = async (page, pageSize, userLoggedId) => {
-  let followersLoggedUser;
-  const options = {
-    page,
-    limit: pageSize,
-    sort: { _id: 1 },
-    select: { user: 1, _id: 0 },
-  };
+const followersListLoggedUser = async (userLoggedId) => {
+  let followers;
+  let followersClean = [];
 
   // @ts-ignore
-  followersLoggedUser = await followModel.paginate(
-    { followed: userLoggedId },
-    options
-  );
-  return followersLoggedUser;
+  followers = await followModel
+    .find({ followed: userLoggedId })
+    .select({ user: 1, _id: 0 })
+    .exec();
+
+  followers.forEach((follow) => {
+    followersClean.push(follow.user);
+  });
+
+  return followersClean;
 };
 
 module.exports = {
