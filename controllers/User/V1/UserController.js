@@ -16,6 +16,7 @@ const {
 const jwt = require("../../../utilitario/jwt");
 const CleanBody = require("../../../utilitario/CleanBody");
 const { ValidateImage } = require("../../../utilitario/ValidateImage");
+const { followUserInfo } = require("../../../services/Follow/FollowService");
 
 /**
  * @swagger
@@ -252,9 +253,19 @@ const Login = async (req, res) => {
 
 const GetUserProfile = async (req, res) => {
   let userId = req.params.id;
-  let user;
+  let user, followInfo;
   try {
     user = await GetUserById(userId);
+  } catch (error) {
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
+      message: error.message,
+    });
+  }
+
+  try {
+    followInfo = await followUserInfo(userId, req.user.id);
   } catch (error) {
     return res.status(error.statusCode).json({
       status: error.status,
@@ -266,7 +277,10 @@ const GetUserProfile = async (req, res) => {
   return res.status(200).json({
     status: "OK",
     statusCode: 200,
+    logged: req.user.id,
     user: user,
+    followIng: followInfo.following,
+    follower: followInfo.follower,
   });
 };
 

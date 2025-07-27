@@ -107,7 +107,6 @@ const followingListLoggedUser = async (userLoggedId) => {
   let following;
   let followingClean = [];
 
-  // @ts-ignore
   following = await followModel
     .find({ user: userLoggedId })
     .select({ followed: 1, _id: 0 })
@@ -124,7 +123,6 @@ const followersListLoggedUser = async (userLoggedId) => {
   let followers;
   let followersClean = [];
 
-  // @ts-ignore
   followers = await followModel
     .find({ followed: userLoggedId })
     .select({ user: 1, _id: 0 })
@@ -137,8 +135,30 @@ const followersListLoggedUser = async (userLoggedId) => {
   return followersClean;
 };
 
+const followUserInfo = async (userProfileId, userLoggedId) => {
+  let follower, following;
+  if (!userProfileId || !validator.isMongoId(userProfileId)) {
+    throw new BadRequest("El ID del usuario no es válido: userProfileId");
+  }
+
+  if (!userLoggedId || !validator.isMongoId(userLoggedId)) {
+    throw new BadRequest("El ID del usuario no es válido: userLoggedId");
+  }
+
+  following = await followModel
+    .findOne({ followed: userProfileId, user: userLoggedId })
+    .exec();
+
+  follower = await followModel
+    .findOne({ followed: userLoggedId, user: userProfileId })
+    .exec();
+
+  return { following, follower };
+};
+
 module.exports = {
   FollowUser,
   UnfollowUser,
   FollowingList,
+  followUserInfo,
 };
