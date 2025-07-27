@@ -78,6 +78,49 @@ const Follow = async (req, res) => {
   });
 };
 
+/**
+ * @swagger
+ * /Api/v1/follow/unfollowUser/{id}:
+ *   delete:
+ *     summary: Dejar de seguir a un usuario
+ *     tags:
+ *       - Follow
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del usuario al que se dejará de seguir
+ *         schema:
+ *           type: string
+ *           example: 64a1efbce5b4f20012d34a23
+ *     responses:
+ *       200:
+ *         description: Usuario dejado de seguir con éxito
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 statusCode:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Ya no sigues a este usuario
+ *       400:
+ *         description: Error de validación o parámetros incorrectos
+ *       401:
+ *         description: No autorizado, token JWT inválido o ausente
+ *       404:
+ *         description: El seguimiento no existe
+ *       500:
+ *         description: Error interno del servidor
+ */
 const Unfollow = async (req, res) => {
   const followedId = req.params.id;
   const userLoggedId = req.user.id;
