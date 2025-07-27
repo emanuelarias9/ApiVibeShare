@@ -9,11 +9,11 @@ const {
 
 const Follow = async (req, res) => {
   const params = req.body;
-  const userLogged = req.user;
+  const userLoggedId = req.user.id;
   let followSaved;
 
   try {
-    followSaved = await FollowUser(params.followed, userLogged.id);
+    followSaved = await FollowUser(params, userLoggedId);
   } catch (error) {
     return res.status(error.statusCode).json({
       status: error.status,
