@@ -16,7 +16,11 @@ const {
 const jwt = require("../../../utilitario/jwt");
 const CleanBody = require("../../../utilitario/CleanBody");
 const { ValidateImage } = require("../../../utilitario/ValidateImage");
-const { followUserInfo } = require("../../../services/Follow/FollowService");
+const {
+  followUserInfo,
+  followingListLoggedUser,
+  followersListLoggedUser,
+} = require("../../../services/Follow/FollowService");
 
 /**
  * @swagger
@@ -339,9 +343,29 @@ const GetUserProfile = async (req, res) => {
 const GetUsers = async (req, res) => {
   let page = parseInt(req.params.page || 1);
   let pageSize = 5;
-  let users;
+  let users, followingLoggedUser, followersLoggedUser;
   try {
     users = await GetAllUsers(page, pageSize);
+  } catch (error) {
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
+      message: error.message,
+    });
+  }
+
+  try {
+    followingLoggedUser = await followingListLoggedUser(req.user.id);
+  } catch (error) {
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
+      message: error.message,
+    });
+  }
+
+  try {
+    followersLoggedUser = await followersListLoggedUser(req.user.id);
   } catch (error) {
     return res.status(error.statusCode).json({
       status: error.status,
@@ -358,6 +382,8 @@ const GetUsers = async (req, res) => {
     totalUsers: users.totalDocs,
     totalPages: users.totalPages,
     users: users.docs,
+    followingLoggedUser,
+    followersLoggedUser,
   });
 };
 

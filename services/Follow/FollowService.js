@@ -161,4 +161,6 @@ module.exports = {
   UnfollowUser,
   FollowingList,
   followUserInfo,
+  followingListLoggedUser,
+  followersListLoggedUser,
 };
