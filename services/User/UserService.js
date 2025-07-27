@@ -111,6 +111,12 @@ const ValidateLoginCredentials = async (params) => {
   return user;
 };
 
+const ValidateIdExist = async (id) => {
+  const count = await userModel.countDocuments({ _id: id });
+  const exist = count > 0;
+  return exist;
+};
+
 const GetUserById = async (userId) => {
   if (!userId || !validator.isMongoId(userId)) {
     throw new BadRequest("El ID del usuario no es válido");
@@ -220,6 +226,7 @@ module.exports = {
   ValidateUserExists,
   ValidateLoginInfo,
   ValidateLoginCredentials,
+  ValidateIdExist,
   GetUserById,
   GetAllUsers,
   UpdateUserInfo,

@@ -5,6 +5,7 @@ const {
   NotFound,
 } = require("../../utilitario/HttpErrors");
 const followModel = require("../../models/Follow");
+const { ValidateIdExist } = require("../User/UserService");
 const validator = require("validator");
 
 const FollowUser = async (params, userLoggedId) => {
@@ -12,7 +13,7 @@ const FollowUser = async (params, userLoggedId) => {
     throw new BadRequest("El parámetro followed es obligatorio");
   }
 
-  let followedId = params.followedId;
+  let followedId = params.followed;
   let followExists = await ValidateFollow(followedId, userLoggedId);
 
   if (followExists) {
@@ -59,6 +60,12 @@ const ValidateFollow = async (followedId, userLoggedId) => {
 
   if (!userLoggedId || !validator.isMongoId(userLoggedId)) {
     throw new BadRequest("El ID del usuario no es válido: userLoggedId");
+  }
+
+  let exist = await ValidateIdExist(followedId);
+
+  if (!exist) {
+    throw new NotFound(`"El usuario no existe."`);
   }
 
   const followExists = await followModel
