@@ -79,10 +79,6 @@ const FollowingList = async (params, userLoggedId) => {
     sort: { _id: 1 },
     populate: [
       {
-        path: "user",
-        select: "username nick email image",
-      },
-      {
         path: "followed",
         select: "username nick email image",
       },
