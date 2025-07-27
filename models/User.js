@@ -6,6 +6,11 @@ const mongoosePaginate = require("mongoose-paginate-v2");
  *   schemas:
  *     User:
  *       type: object
+ *       required:
+ *         - username
+ *         - nick
+ *         - email
+ *         - password
  *       properties:
  *         _id:
  *           type: string
