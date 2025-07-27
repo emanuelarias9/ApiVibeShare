@@ -4,6 +4,7 @@ const {
   FollowUser,
   UnfollowUser,
   FollowingList,
+  FollowersList,
 } = require("../../../services/Follow/FollowService");
 
 const Follow = async (req, res) => {
@@ -79,8 +80,38 @@ const Following = async (req, res) => {
   });
 };
 
+const Followers = async (req, res) => {
+  let followersList, followingListLoggedUser, followersListLoggedUser;
+
+  try {
+    [followersList, followingListLoggedUser, followersListLoggedUser] =
+      await FollowersList(req.params, req.user.id);
+  } catch (error) {
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
+      message: error.message,
+    });
+  }
+  res.status(200).json({
+    status: "OK",
+    statusCode: 200,
+    message: "Listado de usuarios que te sigen",
+    followers: {
+      page: followersList.page,
+      pageSize: followersList.limit,
+      totalUsers: followersList.totalDocs,
+      totalPages: followersList.totalPages,
+      followers: followersList.docs,
+    },
+    followingLoggedUser: followingListLoggedUser,
+    followersLoggedUser: followersListLoggedUser,
+  });
+};
+
 module.exports = {
   Follow,
   Unfollow,
   Following,
+  Followers,
 };

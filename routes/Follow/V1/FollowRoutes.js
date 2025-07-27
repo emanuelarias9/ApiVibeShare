@@ -11,5 +11,10 @@ router.get(
   authenticate,
   FollowController.Following
 );
+router.get(
+  "/followers{/:page}{/:id}",
+  authenticate,
+  FollowController.Followers
+);
 // Exportar el router
 module.exports = router;

@@ -17,9 +17,9 @@ const jwt = require("../../../utilitario/jwt");
 const CleanBody = require("../../../utilitario/CleanBody");
 const { ValidateImage } = require("../../../utilitario/ValidateImage");
 const {
-  followUserInfo,
-  followingListLoggedUser,
-  followersListLoggedUser,
+  FollowUserInfo,
+  FollowingListLoggedUser,
+  FollowersListLoggedUser,
 } = require("../../../services/Follow/FollowService");
 
 /**
@@ -269,7 +269,7 @@ const GetUserProfile = async (req, res) => {
   }
 
   try {
-    followInfo = await followUserInfo(userId, req.user.id);
+    followInfo = await FollowUserInfo(userId, req.user.id);
   } catch (error) {
     return res.status(error.statusCode).json({
       status: error.status,
@@ -355,7 +355,7 @@ const GetUsers = async (req, res) => {
   }
 
   try {
-    followingLoggedUser = await followingListLoggedUser(req.user.id);
+    followingLoggedUser = await FollowingListLoggedUser(req.user.id);
   } catch (error) {
     return res.status(error.statusCode).json({
       status: error.status,
@@ -365,7 +365,7 @@ const GetUsers = async (req, res) => {
   }
 
   try {
-    followersLoggedUser = await followersListLoggedUser(req.user.id);
+    followersLoggedUser = await FollowersListLoggedUser(req.user.id);
   } catch (error) {
     return res.status(error.statusCode).json({
       status: error.status,

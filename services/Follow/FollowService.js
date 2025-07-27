@@ -77,6 +77,7 @@ const FollowingList = async (params, userLoggedId) => {
     page,
     limit: pageSize,
     sort: { _id: 1 },
+    select: { _id: 0, __v: 0 },
     populate: [
       {
         path: "followed",
@@ -92,14 +93,49 @@ const FollowingList = async (params, userLoggedId) => {
   // @ts-ignore
   followingList = await followModel.paginate({ user: userId }, options);
 
-  followingLoggedUser = await followingListLoggedUser(userLoggedId);
+  followingLoggedUser = await FollowingListLoggedUser(userLoggedId);
 
-  followersLoggedUser = await followersListLoggedUser(userLoggedId);
+  followersLoggedUser = await FollowersListLoggedUser(userLoggedId);
 
   return [followingList, followingLoggedUser, followersLoggedUser];
 };
 
-const followingListLoggedUser = async (userLoggedId) => {
+const FollowersList = async (params, userLoggedId) => {
+  let page = parseInt(params.page || 1);
+  let userId = params.id || userLoggedId;
+  const pageSize = 5;
+  let followersList; //Listado de usuarios que siguen al usuario pasado en params
+  let followingLoggedUser; //Listado de usuarios a los que sigue el usuario logeado
+  let followersLoggedUser; //Listado de usuarios que siguen el usuario logeado
+
+  const options = {
+    page,
+    limit: pageSize,
+    sort: { _id: 1 },
+    select: { _id: 0, __v: 0 },
+    populate: [
+      {
+        path: "user",
+        select: "username nick email image",
+      },
+    ],
+  };
+
+  if (!userId || !validator.isMongoId(userId)) {
+    throw new BadRequest("El ID del usuario no es válido");
+  }
+
+  // @ts-ignore
+  followersList = await followModel.paginate({ followed: userId }, options);
+
+  followingLoggedUser = await FollowingListLoggedUser(userLoggedId);
+
+  followersLoggedUser = await FollowersListLoggedUser(userLoggedId);
+
+  return [followersList, followingLoggedUser, followersLoggedUser];
+};
+
+const FollowingListLoggedUser = async (userLoggedId) => {
   let following;
   let followingClean = [];
 
@@ -115,7 +151,7 @@ const followingListLoggedUser = async (userLoggedId) => {
   return followingClean;
 };
 
-const followersListLoggedUser = async (userLoggedId) => {
+const FollowersListLoggedUser = async (userLoggedId) => {
   let followers;
   let followersClean = [];
 
@@ -131,7 +167,7 @@ const followersListLoggedUser = async (userLoggedId) => {
   return followersClean;
 };
 
-const followUserInfo = async (userProfileId, userLoggedId) => {
+const FollowUserInfo = async (userProfileId, userLoggedId) => {
   let follower, following;
   if (!userProfileId || !validator.isMongoId(userProfileId)) {
     throw new BadRequest("El ID del usuario no es válido: userProfileId");
@@ -156,7 +192,8 @@ module.exports = {
   FollowUser,
   UnfollowUser,
   FollowingList,
-  followUserInfo,
-  followingListLoggedUser,
-  followersListLoggedUser,
+  FollowUserInfo,
+  FollowersList,
+  FollowingListLoggedUser,
+  FollowersListLoggedUser,
 };
