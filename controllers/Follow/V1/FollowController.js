@@ -7,6 +7,54 @@ const {
   FollowersList,
 } = require("../../../services/Follow/FollowService");
 
+/**
+ * @swagger
+ * /Api/v1/follow/followUser:
+ *   post:
+ *     summary: Seguir a un usuario
+ *     tags:
+ *       - Follow
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - followed
+ *             properties:
+ *               followed:
+ *                 type: string
+ *                 description: ID del usuario al que se quiere seguir
+ *                 example: 64a1efbce5b4f20012d34a23
+ *     responses:
+ *       200:
+ *         description: Usuario seguido con éxito
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 statusCode:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Ahora sigues a este usuario
+ *                 followSaved:
+ *                   $ref: '#/components/schemas/Follow'
+ *       400:
+ *         description: Error de validación o parámetros incorrectos
+ *       401:
+ *         description: No autorizado, token JWT inválido o ausente
+ *       500:
+ *         description: Error interno del servidor
+ */
 const Follow = async (req, res) => {
   const params = req.body;
   const userLoggedId = req.user.id;
