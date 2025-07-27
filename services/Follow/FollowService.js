@@ -65,7 +65,7 @@ const ValidateFollow = async (followedId, userLoggedId) => {
   let exist = await ValidateIdExist(followedId);
 
   if (!exist) {
-    throw new NotFound(`"El usuario no existe."`);
+    throw new NotFound("El usuario no existe.");
   }
 
   const followExists = await followModel
