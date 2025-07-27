@@ -142,6 +142,83 @@ const Unfollow = async (req, res) => {
   });
 };
 
+/**
+ * @swagger
+ * /Api/v1/follow/following/{page}/{id}:
+ *   get:
+ *     summary: Obtener la lista de usuarios que un usuario está siguiendo
+ *     tags:
+ *       - Follow
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: page
+ *         required: false
+ *         description: Número de página para paginación (por defecto 1)
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *       - in: path
+ *         name: id
+ *         required: false
+ *         description: ID del usuario del que se quieren ver los seguidos (si se omite, se usa el usuario logueado)
+ *         schema:
+ *           type: string
+ *           example: 64a1ef98e5b4f20012d349fe
+ *     responses:
+ *       200:
+ *         description: Lista de usuarios seguidos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 statusCode:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Listado de usuarios a los que sigues
+ *                 following:
+ *                   type: object
+ *                   properties:
+ *                     page:
+ *                       type: integer
+ *                       example: 1
+ *                     pageSize:
+ *                       type: integer
+ *                       example: 10
+ *                     totalUsers:
+ *                       type: integer
+ *                       example: 42
+ *                     totalPages:
+ *                       type: integer
+ *                       example: 5
+ *                     following:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/User'
+ *                 followingLoggedUser:
+ *                   type: array
+ *                   description: Lista de IDs que el usuario logueado sigue
+ *                   items:
+ *                     type: string
+ *                     example: 64a1efbce5b4f20012d34a23
+ *                 followersLoggedUser:
+ *                   type: array
+ *                   description: Lista de IDs que siguen al usuario logueado
+ *                   items:
+ *                     type: string
+ *                     example: 64a1ef98e5b4f20012d349fe
+ *       401:
+ *         description: No autorizado, token JWT inválido o ausente
+ *       500:
+ *         description: Error interno del servidor
+ */
 const Following = async (req, res) => {
   let followingList, followingListLoggedUser, followersListLoggedUser;
 
