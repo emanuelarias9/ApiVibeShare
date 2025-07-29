@@ -35,4 +35,21 @@ const SavePost = async (params, userId) => {
   return newPost;
 };
 
-module.exports = { SavePost };
+const GetPostById = async (postId) => {
+  if (!postId || !validator.isMongoId(postId)) {
+    throw new BadRequest("El ID de la publicacion no es válido");
+  }
+  const post = await postModel
+    .findById(postId)
+    .populate({
+      path: "user",
+      select: "username nick email image",
+    })
+    .exec();
+  if (!post) {
+    throw new NotFound("Publicacion no encontrada");
+  }
+  return post;
+};
+
+module.exports = { SavePost, GetPostById };
