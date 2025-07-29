@@ -1,6 +1,10 @@
 const postModel = require("../../../models/Post");
 const CleanBody = require("../../../utilitario/CleanBody");
-const { SavePost, GetPostById } = require("../../../services/Post/PostService");
+const {
+  SavePost,
+  GetPostById,
+  DeletePost,
+} = require("../../../services/Post/PostService");
 
 const TestPost = (req, res) => {
   res.status(200).send({
@@ -47,8 +51,27 @@ const Detail = async (req, res) => {
   });
 };
 
+const Delete = async (req, res) => {
+  let Deletedpost;
+  try {
+    Deletedpost = await DeletePost(req.params.id, req.user.id);
+  } catch (error) {
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
+      message: error.message,
+    });
+  }
+  res.status(200).json({
+    status: "OK",
+    statusCode: 200,
+    Deletedpost,
+  });
+};
+
 module.exports = {
   TestPost,
   Save,
   Detail,
+  Delete,
 };
