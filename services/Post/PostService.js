@@ -2,11 +2,13 @@ const {
   InternalServerError,
   BadRequest,
   NotFound,
+  Forbidden,
 } = require("../../utilitario/HttpErrors");
 const postModel = require("../../models/Post");
 const { ValidateIdExist } = require("../User/UserService");
 const validator = require("validator");
 const CleanBody = require("../../utilitario/CleanBody");
+const validateOwnership = require("../../utilitario/validateOwnership");
 
 const SavePost = async (params, userId) => {
   let newPost;
@@ -52,4 +54,25 @@ const GetPostById = async (postId) => {
   return post;
 };
 
-module.exports = { SavePost, GetPostById };
+const DeletePost = async (postId, userId) => {
+  if (!postId || !validator.isMongoId(postId)) {
+    throw new BadRequest("El ID de la publicacion no es válido");
+  }
+  const {
+    exists,
+    isOwner,
+    doc: post,
+  } = await validateOwnership(postModel, postId, userId);
+
+  if (!exists) {
+    throw new NotFound("Publicacion no encontrada");
+  }
+  if (!isOwner) {
+    throw new Forbidden("No tienes permisos para eliminar este post");
+  }
+  const Deletedpost = await post.deleteOne();
+
+  return Deletedpost;
+};
+
+module.exports = { SavePost, GetPostById, DeletePost };
