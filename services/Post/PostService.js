@@ -6,19 +6,23 @@ const {
 const postModel = require("../../models/Post");
 const { ValidateIdExist } = require("../User/UserService");
 const validator = require("validator");
+const CleanBody = require("../../utilitario/CleanBody");
 
 const SavePost = async (params, userId) => {
   let newPost;
+  let cleanParams;
   if (!params) {
     throw new BadRequest("Los parámetros son obligatorios");
   }
 
-  if (!params.text) {
+  cleanParams = CleanBody(params);
+
+  if (!cleanParams.text) {
     throw new BadRequest("No se puede crear una publicacion vacia");
   }
 
   newPost = new postModel({
-    text: params.text,
+    text: cleanParams.text,
     user: userId,
   });
 

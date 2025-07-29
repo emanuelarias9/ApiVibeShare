@@ -57,7 +57,7 @@ const {
  *         description: Error interno del servidor
  */
 const Follow = async (req, res) => {
-  const params = CleanBody(req.body);
+  const params = req.body;
   const userLoggedId = req.user.id;
   let followSaved;
 

@@ -7,13 +7,15 @@ const {
 const followModel = require("../../models/Follow");
 const { ValidateIdExist } = require("../User/UserService");
 const validator = require("validator");
+const CleanBody = require("../../utilitario/CleanBody");
 
 const FollowUser = async (params, userLoggedId) => {
+  let cleanParams;
   if (!params) {
     throw new BadRequest("El parámetro followed es obligatorio");
   }
-
-  let followedId = params.followed;
+  cleanParams = CleanBody(params);
+  let followedId = cleanParams.followed;
   let followExists = await ValidateFollow(followedId, userLoggedId);
 
   if (followExists) {
@@ -78,11 +80,13 @@ const ValidateFollow = async (followedId, userLoggedId) => {
 };
 
 const FollowingList = async (params, userLoggedId) => {
+  let cleanParams;
   if (!params) {
     throw new BadRequest("Los parámetros son obligatorios");
   }
-  let page = parseInt(params.page || 1);
-  let userId = params.id || userLoggedId;
+  cleanParams = CleanBody(params);
+  let page = parseInt(cleanParams.page || 1);
+  let userId = cleanParams.id || userLoggedId;
   const pageSize = 5;
   let followingList; //Listado de usuarios a los que sigue el usuario pasado en params
   let followingLoggedUser; //Listado de usuarios a los que sigue el usuario logeado
@@ -116,11 +120,13 @@ const FollowingList = async (params, userLoggedId) => {
 };
 
 const FollowersList = async (params, userLoggedId) => {
+  let cleanParams;
   if (!params) {
     throw new BadRequest("Los parámetros son obligatorios");
   }
-  let page = parseInt(params.page || 1);
-  let userId = params.id || userLoggedId;
+  cleanParams = CleanBody(params);
+  let page = parseInt(cleanParams.page || 1);
+  let userId = cleanParams.id || userLoggedId;
   const pageSize = 5;
   let followersList; //Listado de usuarios que siguen al usuario pasado en params
   let followingLoggedUser; //Listado de usuarios a los que sigue el usuario logeado

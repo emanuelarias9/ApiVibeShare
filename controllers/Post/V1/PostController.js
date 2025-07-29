@@ -9,7 +9,7 @@ const TestPost = (req, res) => {
 };
 
 const Save = async (req, res) => {
-  const params = CleanBody(req.body);
+  const params = req.body;
   let savedPost;
   try {
     savedPost = await SavePost(params, req.user.id);
