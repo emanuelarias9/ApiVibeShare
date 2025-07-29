@@ -84,7 +84,7 @@ const {
  */
 
 const SignUpUser = async (req, res) => {
-  let params = req.body;
+  let params = CleanBody(req.body);
   let passwordEncrypted;
   let user;
   let userSaved;
@@ -183,7 +183,7 @@ const SignUpUser = async (req, res) => {
  *         description: Credenciales incorrectas
  */
 const Login = async (req, res) => {
-  let params = req.body;
+  let params = CleanBody(req.body);
   let userlogged;
   let token;
 

@@ -1,5 +1,6 @@
 const followModel = require("../../../models/Follow");
 const userModel = require("../../../models/User");
+const CleanBody = require("../../../utilitario/CleanBody");
 const {
   FollowUser,
   UnfollowUser,
@@ -56,7 +57,7 @@ const {
  *         description: Error interno del servidor
  */
 const Follow = async (req, res) => {
-  const params = req.body;
+  const params = CleanBody(req.body);
   const userLoggedId = req.user.id;
   let followSaved;
 
