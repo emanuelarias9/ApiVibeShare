@@ -75,4 +75,37 @@ const DeletePost = async (postId, userId) => {
   return Deletedpost;
 };
 
-module.exports = { SavePost, GetPostById, DeletePost };
+const GetUserPosts = async (params) => {
+  let pageSize = 5;
+  let cleanParams, userId, posts, page;
+
+  if (!params) {
+    throw new BadRequest("Los parámetros son obligatorios");
+  }
+  cleanParams = CleanBody(params);
+
+  page = parseInt(cleanParams.page || 1);
+  userId = cleanParams.id;
+  if (!userId || !validator.isMongoId(userId)) {
+    throw new BadRequest("El ID de usuario no es válido");
+  }
+
+  const options = {
+    page,
+    limit: pageSize,
+    populate: [
+      {
+        path: "user",
+        select: "username nick email image",
+      },
+    ],
+    sort: { createdAt: -1 },
+    select: { __v: 0 },
+  };
+
+  // @ts-ignore
+  posts = await postModel.paginate({ user: userId }, options);
+  return posts;
+};
+
+module.exports = { SavePost, GetPostById, DeletePost, GetUserPosts };
