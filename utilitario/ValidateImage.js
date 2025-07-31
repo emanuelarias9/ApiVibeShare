@@ -22,8 +22,13 @@ const ValidateImage = (file) => {
   }
 };
 
-const DeleteImage = (image) => {
+const DeleteImage = (image, model) => {
   let path = `./uploads/users/avatars/${image}`;
+
+  if (model === "post") {
+    path = `./uploads/posts/${image}`;
+  }
+
   if (fs.existsSync(path) && image !== "default.png") {
     fs.unlinkSync(path);
   }
