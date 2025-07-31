@@ -25,5 +25,6 @@ router.post(
   [authenticate, upload.single("file")],
   PostController.UploadImage
 );
+router.get("/postImage/:id", authenticate, PostController.PostImage);
 // Exportar el router
 module.exports = router;

@@ -5,7 +5,7 @@ const {
   Forbidden,
 } = require("../../utilitario/HttpErrors");
 const postModel = require("../../models/Post");
-const { ValidateIdExist } = require("../User/UserService");
+const path = require("path");
 const validator = require("validator");
 const CleanBody = require("../../utilitario/CleanBody");
 const validateOwnership = require("../../utilitario/validateOwnership");
@@ -140,10 +140,30 @@ const UploadPostImage = async (userId, params, file) => {
   return postUpdated;
 };
 
+const GetPostImage = async (params) => {
+  let cleanParams, postId;
+  cleanParams = CleanBody(params);
+  postId = cleanParams.id;
+  if (!validator.isMongoId(postId)) {
+    throw new BadRequest("El ID de publicacion no es válido");
+  }
+
+  const post = await postModel.findById(postId).exec();
+
+  if (!post) {
+    throw new NotFound("Publicacion no encontrada");
+  }
+
+  let filepath = path.resolve(`./uploads/posts/${post.file}`);
+
+  return filepath;
+};
+
 module.exports = {
   SavePost,
   GetPostById,
   DeletePost,
   GetUserPosts,
   UploadPostImage,
+  GetPostImage,
 };

@@ -4,6 +4,7 @@ const {
   DeletePost,
   GetUserPosts,
   UploadPostImage,
+  GetPostImage,
 } = require("../../../services/Post/PostService");
 const { ValidateImage } = require("../../../utilitario/ValidateImage");
 
@@ -125,10 +126,26 @@ const UploadImage = async (req, res) => {
   });
 };
 
+const PostImage = async (req, res) => {
+  let postImage;
+  try {
+    postImage = await GetPostImage(req.params);
+  } catch (error) {
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
+      message: error.message,
+    });
+  }
+
+  return res.sendFile(postImage); // Send the image file directly
+};
+
 module.exports = {
   Save,
   Detail,
   Delete,
   UserPosts,
   UploadImage,
+  PostImage,
 };
