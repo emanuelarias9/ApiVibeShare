@@ -1,10 +1,11 @@
-const postModel = require("../../../models/Post");
 const {
   SavePost,
   GetPostById,
   DeletePost,
   GetUserPosts,
+  UploadPostImage,
 } = require("../../../services/Post/PostService");
+const { ValidateImage } = require("../../../utilitario/ValidateImage");
 
 const Save = async (req, res) => {
   const params = req.body;
@@ -88,9 +89,46 @@ const UserPosts = async (req, res) => {
   });
 };
 
+const UploadImage = async (req, res) => {
+  let file = req.file;
+  let postUpdated;
+  try {
+    ValidateImage(file);
+  } catch (error) {
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
+      message: error.message,
+    });
+  }
+
+  try {
+    postUpdated = await UploadPostImage(req.user.id, req.params, file);
+  } catch (error) {
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
+      message: error.message,
+    });
+  }
+
+  return res.status(200).json({
+    status: "OK",
+    statusCode: 200,
+    message: "File uploaded successfully",
+    post: {
+      id: postUpdated._id,
+      text: postUpdated.text,
+      createdAt: postUpdated.createdAt,
+      file: file.filename,
+    },
+  });
+};
+
 module.exports = {
   Save,
   Detail,
   Delete,
   UserPosts,
+  UploadImage,
 };

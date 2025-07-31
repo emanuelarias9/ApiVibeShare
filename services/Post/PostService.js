@@ -9,6 +9,7 @@ const { ValidateIdExist } = require("../User/UserService");
 const validator = require("validator");
 const CleanBody = require("../../utilitario/CleanBody");
 const validateOwnership = require("../../utilitario/validateOwnership");
+const { DeleteImage } = require("../../utilitario/ValidateImage");
 
 const SavePost = async (params, userId) => {
   let newPost;
@@ -82,6 +83,7 @@ const GetUserPosts = async (params) => {
   if (!params) {
     throw new BadRequest("Los parámetros son obligatorios");
   }
+
   cleanParams = CleanBody(params);
 
   page = parseInt(cleanParams.page || 1);
@@ -108,4 +110,40 @@ const GetUserPosts = async (params) => {
   return posts;
 };
 
-module.exports = { SavePost, GetPostById, DeletePost, GetUserPosts };
+const UploadPostImage = async (userId, params, file) => {
+  let cleanParams, postId, postUpdated;
+  if (!params) {
+    DeleteImage(file.filename);
+    throw new BadRequest("Los parámetros son obligatorios");
+  }
+
+  cleanParams = CleanBody(params);
+  postId = cleanParams.id;
+  if (!postId || !validator.isMongoId(postId)) {
+    DeleteImage(file.filename, "post");
+    throw new BadRequest("El ID de publicacion no es válido");
+  }
+
+  postUpdated = await postModel
+    .findOneAndUpdate(
+      { _id: postId, user: userId },
+      { file: file.filename },
+      { new: false }
+    )
+    .exec();
+
+  if (!postUpdated) {
+    DeleteImage(file.filename, "post");
+    throw new NotFound("Publicacion no encontrada");
+  }
+  DeleteImage(postUpdated.file, "post");
+  return postUpdated;
+};
+
+module.exports = {
+  SavePost,
+  GetPostById,
+  DeletePost,
+  GetUserPosts,
+  UploadPostImage,
+};
