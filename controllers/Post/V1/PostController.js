@@ -550,6 +550,101 @@ const PostImage = async (req, res) => {
   return res.sendFile(postImage); // Send the image file directly
 };
 
+/**
+ * @swagger
+ * /api/v1/post/feed/{page}:
+ *   get:
+ *     summary: Obtener el feed de publicaciones de los usuarios seguidos
+ *     tags:
+ *       - Post
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: page
+ *         required: false
+ *         description: Número de página para paginación (por defecto 1)
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     responses:
+ *       200:
+ *         description: Feed obtenido exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 statusCode:
+ *                   type: integer
+ *                   example: 200
+ *                 feed:
+ *                   type: object
+ *                   properties:
+ *                     page:
+ *                       type: integer
+ *                       example: 1
+ *                     pageSize:
+ *                       type: integer
+ *                       example: 5
+ *                     totalPosts:
+ *                       type: integer
+ *                       example: 1
+ *                     totalPages:
+ *                       type: integer
+ *                       example: 1
+ *                     hasPrevPage:
+ *                       type: boolean
+ *                       example: false
+ *                     hasNextPage:
+ *                       type: boolean
+ *                       example: false
+ *                     prevPage:
+ *                       type: integer
+ *                       nullable: true
+ *                       example: null
+ *                     nextPage:
+ *                       type: integer
+ *                       nullable: true
+ *                       example: null
+ *                     posts:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                             example: 688837a0738790b32f4e8e0b
+ *                           user:
+ *                             type: object
+ *                             properties:
+ *                               _id:
+ *                                 type: string
+ *                                 example: 68826f5db2dcc94a75398a84
+ *                               username:
+ *                                 type: string
+ *                                 example: adenness0
+ *                               nick:
+ *                                 type: string
+ *                                 example: Abigale
+ *                               image:
+ *                                 type: string
+ *                                 example: default.png
+ *                           text:
+ *                             type: string
+ *                             example: "Publicacion test"
+ *                           createdAt:
+ *                             type: string
+ *                             format: date-time
+ *                             example: 2025-07-29T02:53:20.917Z
+ *       401:
+ *         description: No autorizado, token JWT inválido o ausente
+ *       500:
+ *         description: Error interno del servidor
+ */
 const Feed = async (req, res) => {
   let feed;
   try {
