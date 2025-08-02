@@ -252,6 +252,110 @@ const Delete = async (req, res) => {
   });
 };
 
+/**
+ * @swagger
+ * /api/v1/post/userPosts/{id}/{page}:
+ *   get:
+ *     summary: Obtener las publicaciones de un usuario específico con paginación
+ *     tags:
+ *       - Post
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del usuario cuyas publicaciones se desean obtener
+ *         schema:
+ *           type: string
+ *           example: 68788e3cf8d7114cece523ab
+ *       - in: path
+ *         name: page
+ *         required: false
+ *         description: Número de página para paginación (por defecto 1)
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     responses:
+ *       200:
+ *         description: Lista paginada de publicaciones del usuario
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 statusCode:
+ *                   type: integer
+ *                   example: 200
+ *                 posts:
+ *                   type: object
+ *                   properties:
+ *                     page:
+ *                       type: integer
+ *                       example: 1
+ *                     pageSize:
+ *                       type: integer
+ *                       example: 5
+ *                     totalPosts:
+ *                       type: integer
+ *                       example: 11
+ *                     totalPages:
+ *                       type: integer
+ *                       example: 3
+ *                     hasPrevPage:
+ *                       type: boolean
+ *                       example: false
+ *                     hasNextPage:
+ *                       type: boolean
+ *                       example: true
+ *                     prevPage:
+ *                       type: integer
+ *                       nullable: true
+ *                       example: null
+ *                     nextPage:
+ *                       type: integer
+ *                       nullable: true
+ *                       example: 2
+ *                     posts:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                             example: 688d925629013fb68a029308
+ *                           user:
+ *                             type: object
+ *                             properties:
+ *                               _id:
+ *                                 type: string
+ *                                 example: 68788e3cf8d7114cece523ab
+ *                               username:
+ *                                 type: string
+ *                                 example: emanuelariasjoiro
+ *                               nick:
+ *                                 type: string
+ *                                 example: EmaDev
+ *                               image:
+ *                                 type: string
+ *                                 example: Avatar-1752892768732-will.jpg
+ *                           text:
+ *                             type: string
+ *                             example: publicacion 12
+ *                           createdAt:
+ *                             type: string
+ *                             format: date-time
+ *                             example: 2025-08-02T04:21:42.092Z
+ *       401:
+ *         description: No autorizado, token JWT inválido o ausente
+ *       404:
+ *         description: Usuario no encontrado o sin publicaciones
+ *       500:
+ *         description: Error interno del servidor
+ */
 const UserPosts = async (req, res) => {
   let posts;
   try {
