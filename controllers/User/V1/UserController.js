@@ -611,6 +611,60 @@ const Avatar = async (req, res) => {
   return res.sendFile(avatar); // Send the image file directly
 };
 
+/**
+ * @swagger
+ * /api/v1/user/counters/{id}:
+ *   get:
+ *     summary: Obtener contadores de actividad de un usuario (posts, seguidores y seguidos)
+ *     tags:
+ *       - User
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del usuario del que se quieren obtener los contadores
+ *         schema:
+ *           type: string
+ *           example: 68788e3cf8d7114cece523af
+ *     responses:
+ *       200:
+ *         description: Contadores obtenidos correctamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 statusCode:
+ *                   type: integer
+ *                   example: 200
+ *                 userId:
+ *                   type: string
+ *                   description: ID del usuario al que pertenecen los contadores
+ *                   example: 68788e3cf8d7114cece523ab
+ *                 posts:
+ *                   type: integer
+ *                   description: Número total de publicaciones del usuario
+ *                   example: 11
+ *                 followers:
+ *                   type: integer
+ *                   description: Número de seguidores
+ *                   example: 1
+ *                 following:
+ *                   type: integer
+ *                   description: Número de usuarios que sigue
+ *                   example: 7
+ *       401:
+ *         description: No autorizado, token JWT inválido o ausente
+ *       404:
+ *         description: Usuario no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
 const Counters = async (req, res) => {
   let counters;
   try {

@@ -242,6 +242,11 @@ const GetCounters = async (userId) => {
     throw new BadRequest("El ID del usuario no es válido");
   }
 
+  const exists = ValidateIdExist(userId);
+  if (!exists) {
+    throw new NotFound("Usuario no encontrado");
+  }
+
   const counters = await Promise.allSettled([
     followModel.countDocuments({ followed: userId }), // followers
     followModel.countDocuments({ user: userId }), // following
