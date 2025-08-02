@@ -100,7 +100,7 @@ const FollowingList = async (params, userLoggedId) => {
     populate: [
       {
         path: "followed",
-        select: "username nick email image",
+        select: "username nick image",
       },
     ],
   };
@@ -140,7 +140,7 @@ const FollowersList = async (params, userLoggedId) => {
     populate: [
       {
         path: "user",
-        select: "username nick email image",
+        select: "username nick image",
       },
     ],
   };
