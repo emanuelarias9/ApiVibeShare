@@ -1,6 +1,8 @@
 const fs = require("fs");
 const validator = require("validator");
 const userModel = require("../../models/User");
+const followModel = require("../../models/Follow");
+const postModel = require("../../models/Post");
 const path = require("path");
 const {
   BadRequest,
@@ -235,7 +237,28 @@ const GetUserAvatar = async (userId) => {
 
   return filepath;
 };
+const GetCounters = async (userId) => {
+  if (!userId || !validator.isMongoId(userId)) {
+    throw new BadRequest("El ID del usuario no es válido");
+  }
 
+  const counters = await Promise.allSettled([
+    followModel.countDocuments({ followed: userId }), // followers
+    followModel.countDocuments({ user: userId }), // following
+    postModel.countDocuments({ user: userId }), // posts
+  ]);
+  const [followersCount, followingCount, postsCount] = counters;
+
+  const posts = postsCount.status === "fulfilled" ? postsCount.value : 0;
+
+  const followers =
+    followersCount.status === "fulfilled" ? followersCount.value : 0;
+
+  const following =
+    followingCount.status === "fulfilled" ? followingCount.value : 0;
+
+  return { userId, posts, followers, following };
+};
 module.exports = {
   ValidateBasicInfoUser,
   ValidateUserExists,
@@ -247,4 +270,5 @@ module.exports = {
   UpdateUserInfo,
   UpdateUserImage,
   GetUserAvatar,
+  GetCounters,
 };

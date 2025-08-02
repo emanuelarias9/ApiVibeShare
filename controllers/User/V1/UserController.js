@@ -12,6 +12,7 @@ const {
   UpdateUserInfo,
   UpdateUserImage,
   GetUserAvatar,
+  GetCounters,
 } = require("../../../services/User/UserService");
 const jwt = require("../../../utilitario/jwt");
 const CleanBody = require("../../../utilitario/CleanBody");
@@ -595,7 +596,7 @@ const UploadImage = (req, res) => {
  *         description: Error interno al obtener el avatar
  */
 
-const avatar = async (req, res) => {
+const Avatar = async (req, res) => {
   let avatar;
   try {
     avatar = await GetUserAvatar(req.user.id);
@@ -610,6 +611,28 @@ const avatar = async (req, res) => {
   return res.sendFile(avatar); // Send the image file directly
 };
 
+const Counters = async (req, res) => {
+  let counters;
+  try {
+    counters = await GetCounters(req.params.id);
+  } catch (error) {
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
+      message: error.message,
+    });
+  }
+
+  return res.status(200).json({
+    status: "OK",
+    statusCode: 200,
+    userId: counters.userId,
+    posts: counters.posts,
+    followers: counters.followers,
+    following: counters.following,
+  });
+};
+
 module.exports = {
   Login,
   GetUsers,
@@ -617,5 +640,6 @@ module.exports = {
   GetUserProfile,
   UpdateUser,
   UploadImage,
-  avatar,
+  Avatar,
+  Counters,
 };
