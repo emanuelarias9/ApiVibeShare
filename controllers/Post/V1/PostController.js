@@ -495,6 +495,46 @@ const UploadImage = async (req, res) => {
   });
 };
 
+/**
+ * @swagger
+ * /api/v1/post/postImage/{id}:
+ *   get:
+ *     summary: Obtener la imagen asociada a una publicación
+ *     tags:
+ *       - Post
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del post cuya imagen se desea obtener
+ *         schema:
+ *           type: string
+ *           example: 68899c2db056a0c5edbcc75f
+ *     responses:
+ *       200:
+ *         description: Imagen devuelta exitosamente
+ *         content:
+ *           image/jpeg:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *           image/png:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *           image/webp:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       401:
+ *         description: No autorizado, token JWT inválido o ausente
+ *       404:
+ *         description: Imagen no encontrada
+ *       500:
+ *         description: Error interno del servidor
+ */
 const PostImage = async (req, res) => {
   let postImage;
   try {
