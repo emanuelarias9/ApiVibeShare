@@ -385,6 +385,80 @@ const UserPosts = async (req, res) => {
   });
 };
 
+/**
+ * @swagger
+ * /api/v1/post/uploadImage/{id}:
+ *   post:
+ *     summary: Subir una imagen a una publicación existente
+ *     tags:
+ *       - Post
+ *     security:
+ *       - bearerAuth: []
+ *     consumes:
+ *       - multipart/form-data
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del post al que se desea subir la imagen
+ *         schema:
+ *           type: string
+ *           example: 68899c2db056a0c5edbcc75f
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *                 description: Archivo de imagen a subir
+ *     responses:
+ *       200:
+ *         description: Imagen subida correctamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 statusCode:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: File uploaded successfully
+ *                 post:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: 68899c2db056a0c5edbcc75f
+ *                     text:
+ *                       type: string
+ *                       example: publicacion 2
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: 2025-07-30T04:14:37.705Z
+ *                     file:
+ *                       type: string
+ *                       example: Post-1754113207437-default.png
+ *       400:
+ *         description: Archivo no válido o faltante
+ *       401:
+ *         description: No autorizado, token JWT inválido o ausente
+ *       403:
+ *         description: No tienes permiso para modificar esta publicación
+ *       404:
+ *         description: Publicación no encontrada
+ *       500:
+ *         description: Error interno del servidor
+ */
 const UploadImage = async (req, res) => {
   let file = req.file;
   let postUpdated;
