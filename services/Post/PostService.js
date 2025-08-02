@@ -70,7 +70,7 @@ const DeletePost = async (postId, userId) => {
     throw new NotFound("Publicacion no encontrada");
   }
   if (!isOwner) {
-    throw new Forbidden("No tienes permisos para eliminar este post");
+    throw new Forbidden("No tienes permiso para eliminar esta publicación");
   }
   const Deletedpost = await post.deleteOne();
 
@@ -112,7 +112,7 @@ const GetUserPosts = async (params) => {
 };
 
 const UploadPostImage = async (userId, params, file) => {
-  let cleanParams, postId, postUpdated;
+  let cleanParams, postId;
   if (!params) {
     DeleteImage(file.filename);
     throw new BadRequest("Los parámetros son obligatorios");
@@ -125,6 +125,21 @@ const UploadPostImage = async (userId, params, file) => {
     throw new BadRequest("El ID de publicacion no es válido");
   }
 
+  let {
+    exists,
+    isOwner,
+    doc: postUpdated,
+  } = await validateOwnership(postModel, postId, userId);
+
+  if (!exists) {
+    DeleteImage(file.filename, "post");
+    throw new NotFound("Publicacion no encontrada");
+  }
+  if (!isOwner) {
+    DeleteImage(file.filename, "post");
+    throw new Forbidden("No tienes permiso para modificar esta publicación");
+  }
+
   postUpdated = await postModel
     .findOneAndUpdate(
       { _id: postId, user: userId },
@@ -135,9 +150,9 @@ const UploadPostImage = async (userId, params, file) => {
 
   if (!postUpdated) {
     DeleteImage(file.filename, "post");
-    throw new NotFound("Publicacion no encontrada");
+    throw new InternalServerError("No se pudo modificar la Publicacion");
   }
-  DeleteImage(postUpdated.file, "post");
+  DeleteImage(postUpdated.file, "post"); //Eliminar la imagen anterior
   return postUpdated;
 };
 
