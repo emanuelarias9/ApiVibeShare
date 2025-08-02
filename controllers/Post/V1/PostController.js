@@ -185,6 +185,55 @@ const Detail = async (req, res) => {
   });
 };
 
+/**
+ * @swagger
+ * /api/v1/post/delete/{id}:
+ *   delete:
+ *     summary: Eliminar una publicación por su ID
+ *     tags:
+ *       - Post
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del post que se desea eliminar
+ *         schema:
+ *           type: string
+ *           example: 68899c29b056a0c5edbcc75d
+ *     responses:
+ *       200:
+ *         description: Publicación eliminada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 statusCode:
+ *                   type: integer
+ *                   example: 200
+ *                 Deletedpost:
+ *                   type: object
+ *                   properties:
+ *                     acknowledged:
+ *                       type: boolean
+ *                       example: true
+ *                     deletedCount:
+ *                       type: integer
+ *                       example: 1
+ *       401:
+ *         description: No autorizado, token JWT inválido o ausente
+ *       403:
+ *         description: No tienes permiso para eliminar este post
+ *       404:
+ *         description: Post no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
 const Delete = async (req, res) => {
   let Deletedpost;
   try {
