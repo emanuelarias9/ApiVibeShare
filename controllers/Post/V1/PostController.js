@@ -98,6 +98,75 @@ const Save = async (req, res) => {
   });
 };
 
+/**
+ * @swagger
+ * /api/v1/post/detail/{id}:
+ *   get:
+ *     summary: Obtener el detalle de una publicación
+ *     tags:
+ *       - Post
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del post a consultar
+ *         schema:
+ *           type: string
+ *           example: 68899c45b056a0c5edbcc76b
+ *     responses:
+ *       200:
+ *         description: Detalle del post obtenido exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 statusCode:
+ *                   type: integer
+ *                   example: 200
+ *                 post:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 68899c45b056a0c5edbcc76b
+ *                     user:
+ *                       type: object
+ *                       properties:
+ *                         _id:
+ *                           type: string
+ *                           example: 68788e3cf8d7114cece523ab
+ *                         username:
+ *                           type: string
+ *                           example: emanuelariasjoiro
+ *                         nick:
+ *                           type: string
+ *                           example: EmaDev
+ *                         image:
+ *                           type: string
+ *                           example: Avatar-1752892768732-will.jpg
+ *                     text:
+ *                       type: string
+ *                       example: publicacion 8
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: 2025-07-30T04:15:01.133Z
+ *                     __v:
+ *                       type: integer
+ *                       example: 0
+ *       401:
+ *         description: No autorizado, token JWT inválido o ausente
+ *       404:
+ *         description: Post no encontrado
+ *       500:
+ *         description: Error interno del servidor
+ */
 const Detail = async (req, res) => {
   let post;
   try {
