@@ -8,7 +8,75 @@ const {
   GetFeed,
 } = require("../../../services/Post/PostService");
 const { ValidateImage } = require("../../../utilitario/ValidateImage");
-
+/**
+ * @swagger
+ * /api/v1/post/save:
+ *   post:
+ *     summary: Crear una nueva publicación
+ *     tags:
+ *       - Post
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - text
+ *             properties:
+ *               text:
+ *                 type: string
+ *                 description: Contenido del post
+ *                 example: string
+ *     responses:
+ *       200:
+ *         description: Publicación creada exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: OK
+ *                 statusCode:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Publicacion Creada
+ *                 savedPost:
+ *                   type: object
+ *                   properties:
+ *                     user:
+ *                       type: string
+ *                       description: ID del usuario que creó la publicación
+ *                       example: 68788e3cf8d7114cece523ab
+ *                     text:
+ *                       type: string
+ *                       example: publicacion 12
+ *                     file:
+ *                       type: string
+ *                       example: imagen-post-123.jpg
+ *                     _id:
+ *                       type: string
+ *                       example: 688d925629013fb68a029308
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: 2025-08-02T04:21:42.092Z
+ *                     __v:
+ *                       type: integer
+ *                       example: 0
+ *       400:
+ *         description: Datos inválidos o incompletos
+ *       401:
+ *         description: No autorizado, token JWT inválido o ausente
+ *       500:
+ *         description: Error interno del servidor
+ */
 const Save = async (req, res) => {
   const params = req.body;
   let savedPost;
