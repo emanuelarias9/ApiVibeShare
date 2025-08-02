@@ -5,6 +5,7 @@ const {
   GetUserPosts,
   UploadPostImage,
   GetPostImage,
+  GetFeed,
 } = require("../../../services/Post/PostService");
 const { ValidateImage } = require("../../../utilitario/ValidateImage");
 
@@ -85,6 +86,10 @@ const UserPosts = async (req, res) => {
       pageSize: posts.limit,
       totalPosts: posts.totalDocs,
       totalPages: posts.totalPages,
+      hasPrevPage: posts.hasPrevPage,
+      hasNextPage: posts.hasNextPage,
+      prevPage: posts.prevPage,
+      nextPage: posts.nextPage,
       posts: posts.docs,
     },
   });
@@ -141,6 +146,34 @@ const PostImage = async (req, res) => {
   return res.sendFile(postImage); // Send the image file directly
 };
 
+const Feed = async (req, res) => {
+  let feed;
+  try {
+    feed = await GetFeed(req.user.id, req.params);
+  } catch (error) {
+    return res.status(error.statusCode).json({
+      status: error.status,
+      statusCode: error.statusCode,
+      message: error.message,
+    });
+  }
+  return res.status(200).json({
+    status: "OK",
+    statusCode: 200,
+    feed: {
+      page: feed.page,
+      pageSize: feed.limit,
+      totalPosts: feed.totalDocs,
+      totalPages: feed.totalPages,
+      hasPrevPage: feed.hasPrevPage,
+      hasNextPage: feed.hasNextPage,
+      prevPage: feed.prevPage,
+      nextPage: feed.nextPage,
+      posts: feed.docs,
+    },
+  });
+};
+
 module.exports = {
   Save,
   Detail,
@@ -148,4 +181,5 @@ module.exports = {
   UserPosts,
   UploadImage,
   PostImage,
+  Feed,
 };

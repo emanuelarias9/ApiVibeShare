@@ -26,5 +26,6 @@ router.post(
   PostController.UploadImage
 );
 router.get("/postImage/:id", authenticate, PostController.PostImage);
+router.get("/feed{/:page}", authenticate, PostController.Feed);
 // Exportar el router
 module.exports = router;

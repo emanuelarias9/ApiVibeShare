@@ -10,6 +10,7 @@ const validator = require("validator");
 const CleanBody = require("../../utilitario/CleanBody");
 const validateOwnership = require("../../utilitario/validateOwnership");
 const { DeleteImage } = require("../../utilitario/ValidateImage");
+const { FollowingListLoggedUser } = require("../Follow/FollowService");
 
 const SavePost = async (params, userId) => {
   let newPost;
@@ -46,7 +47,7 @@ const GetPostById = async (postId) => {
     .findById(postId)
     .populate({
       path: "user",
-      select: "username nick email image",
+      select: "username nick image",
     })
     .exec();
   if (!post) {
@@ -98,7 +99,7 @@ const GetUserPosts = async (params) => {
     populate: [
       {
         path: "user",
-        select: "username nick email image",
+        select: "username nick image",
       },
     ],
     sort: { createdAt: -1 },
@@ -159,6 +160,35 @@ const GetPostImage = async (params) => {
   return filepath;
 };
 
+const GetFeed = async (userId, params) => {
+  let cleanParams, page, following, feed;
+  let pageSize = 5;
+
+  cleanParams = CleanBody(params);
+  page = parseInt(cleanParams.page || 1);
+  following = await FollowingListLoggedUser(userId);
+
+  const options = {
+    page,
+    limit: pageSize,
+    populate: [
+      {
+        path: "user",
+        select: "username nick image",
+      },
+    ],
+    sort: { createdAt: -1 },
+    select: { __v: 0 },
+  };
+
+  // @ts-ignore
+  feed = await postModel.paginate({ user: { $in: following } }, options);
+  if (!feed) {
+    throw new InternalServerError("Error al obtener el feed.");
+  }
+  return feed;
+};
+
 module.exports = {
   SavePost,
   GetPostById,
@@ -166,4 +196,5 @@ module.exports = {
   GetUserPosts,
   UploadPostImage,
   GetPostImage,
+  GetFeed,
 };
