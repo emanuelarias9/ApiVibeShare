@@ -530,8 +530,6 @@ npm test
 - [X] **`Follow`**: <strike>Implement follow endpoints.</strike>
 - [X] **`Post`**: <strike>Implement post endpoints.</strike>
 - [ ] **`languages`**: implement multiple languages.
-- [ ] **`Theme`**: Implement light/dark theme.
-
 
 ---
 
