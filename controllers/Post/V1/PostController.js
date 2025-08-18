@@ -12,7 +12,7 @@ const { ValidateImage } = require("../../../utilitario/ValidateImage");
  * @swagger
  * /api/v1/post/save:
  *   post:
- *     summary: Crear una nueva publicación
+ *     summary: Create a new post
  *     tags:
  *       - Post
  *     security:
@@ -28,11 +28,11 @@ const { ValidateImage } = require("../../../utilitario/ValidateImage");
  *             properties:
  *               text:
  *                 type: string
- *                 description: Contenido del post
+ *                 description: Post content
  *                 example: string
  *     responses:
  *       200:
- *         description: Publicación creada exitosamente
+ *         description: Post created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -46,13 +46,13 @@ const { ValidateImage } = require("../../../utilitario/ValidateImage");
  *                   example: 200
  *                 message:
  *                   type: string
- *                   example: Publicacion Creada
+ *                   example: Post Created
  *                 savedPost:
  *                   type: object
  *                   properties:
  *                     user:
  *                       type: string
- *                       description: ID del usuario que creó la publicación
+ *                       description: ID of the user who created the post
  *                       example: 68788e3cf8d7114cece523ab
  *                     text:
  *                       type: string
@@ -71,11 +71,11 @@ const { ValidateImage } = require("../../../utilitario/ValidateImage");
  *                       type: integer
  *                       example: 0
  *       400:
- *         description: Datos inválidos o incompletos
+ *         description: Invalid data in the request
  *       401:
- *         description: No autorizado, token JWT inválido o ausente
+ *         description: Unauthorized. Invalid or missing token.
  *       500:
- *         description: Error interno del servidor
+ *         description: Internal Server Error
  */
 const Save = async (req, res) => {
   const params = req.body;
@@ -102,7 +102,7 @@ const Save = async (req, res) => {
  * @swagger
  * /api/v1/post/detail/{id}:
  *   get:
- *     summary: Obtener el detalle de una publicación
+ *     summary: Get the details of a post
  *     tags:
  *       - Post
  *     security:
@@ -111,13 +111,13 @@ const Save = async (req, res) => {
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID del post a consultar
+ *         description: Post ID to search for
  *         schema:
  *           type: string
  *           example: 68899c45b056a0c5edbcc76b
  *     responses:
  *       200:
- *         description: Detalle del post obtenido exitosamente
+ *         description: Detail of the post obtained successfully
  *         content:
  *           application/json:
  *             schema:
@@ -152,7 +152,7 @@ const Save = async (req, res) => {
  *                           example: Avatar-1752892768732-will.jpg
  *                     text:
  *                       type: string
- *                       example: publicacion 8
+ *                       example: post 42
  *                     createdAt:
  *                       type: string
  *                       format: date-time
@@ -161,11 +161,11 @@ const Save = async (req, res) => {
  *                       type: integer
  *                       example: 0
  *       401:
- *         description: No autorizado, token JWT inválido o ausente
+ *         description: Unauthorized. Invalid or missing token.
  *       404:
- *         description: Post no encontrado
+ *         description: Post not found
  *       500:
- *         description: Error interno del servidor
+ *         description: Internal Server Error
  */
 const Detail = async (req, res) => {
   let post;
@@ -189,7 +189,7 @@ const Detail = async (req, res) => {
  * @swagger
  * /api/v1/post/delete/{id}:
  *   delete:
- *     summary: Eliminar una publicación por su ID
+ *     summary: Delete a post by its ID
  *     tags:
  *       - Post
  *     security:
@@ -198,13 +198,13 @@ const Detail = async (req, res) => {
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID del post que se desea eliminar
+ *         description: ID of the post you want to delete
  *         schema:
  *           type: string
  *           example: 68899c29b056a0c5edbcc75d
  *     responses:
  *       200:
- *         description: Publicación eliminada exitosamente
+ *         description: Post successfully deleted
  *         content:
  *           application/json:
  *             schema:
@@ -226,13 +226,13 @@ const Detail = async (req, res) => {
  *                       type: integer
  *                       example: 1
  *       401:
- *         description: No autorizado, token JWT inválido o ausente
+ *         description: Unauthorized. Invalid or missing token.
  *       403:
- *         description: No tienes permiso para eliminar este post
+ *         description: You do not have permission to delete this post.
  *       404:
- *         description: Post no encontrado
+ *         description: Post not found
  *       500:
- *         description: Error interno del servidor
+ *         description: Internal Server Error
  */
 const Delete = async (req, res) => {
   let Deletedpost;
@@ -256,7 +256,7 @@ const Delete = async (req, res) => {
  * @swagger
  * /api/v1/post/userPosts/{id}/{page}:
  *   get:
- *     summary: Obtener las publicaciones de un usuario específico con paginación
+ *     summary: Get paginated posts from a specific user
  *     tags:
  *       - Post
  *     security:
@@ -265,20 +265,20 @@ const Delete = async (req, res) => {
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID del usuario cuyas publicaciones se desean obtener
+ *         description: ID of the user whose posts you want to get
  *         schema:
  *           type: string
  *           example: 68788e3cf8d7114cece523ab
  *       - in: path
  *         name: page
  *         required: false
- *         description: Número de página para paginación (por defecto 1)
+ *         description: Page number for pagination (default 1)
  *         schema:
  *           type: integer
  *           example: 1
  *     responses:
  *       200:
- *         description: Lista paginada de publicaciones del usuario
+ *         description: Paginated list of user posts
  *         content:
  *           application/json:
  *             schema:
@@ -344,17 +344,15 @@ const Delete = async (req, res) => {
  *                                 example: Avatar-1752892768732-will.jpg
  *                           text:
  *                             type: string
- *                             example: publicacion 12
+ *                             example: post 42
  *                           createdAt:
  *                             type: string
  *                             format: date-time
  *                             example: 2025-08-02T04:21:42.092Z
  *       401:
- *         description: No autorizado, token JWT inválido o ausente
- *       404:
- *         description: Usuario no encontrado o sin publicaciones
+ *         description: Unauthorized. Invalid or missing token.
  *       500:
- *         description: Error interno del servidor
+ *         description: Internal Server Error
  */
 const UserPosts = async (req, res) => {
   let posts;
@@ -389,7 +387,7 @@ const UserPosts = async (req, res) => {
  * @swagger
  * /api/v1/post/uploadImage/{id}:
  *   post:
- *     summary: Subir una imagen a una publicación existente
+ *     summary: Upload an image to an existing post
  *     tags:
  *       - Post
  *     security:
@@ -400,7 +398,7 @@ const UserPosts = async (req, res) => {
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID del post al que se desea subir la imagen
+ *         description: ID of the post to which you want to upload the image
  *         schema:
  *           type: string
  *           example: 68899c2db056a0c5edbcc75f
@@ -414,10 +412,10 @@ const UserPosts = async (req, res) => {
  *               file:
  *                 type: string
  *                 format: binary
- *                 description: Archivo de imagen a subir
+ *                 description: Image file to upload
  *     responses:
  *       200:
- *         description: Imagen subida correctamente
+ *         description: Image uploaded successfully
  *         content:
  *           application/json:
  *             schema:
@@ -440,7 +438,7 @@ const UserPosts = async (req, res) => {
  *                       example: 68899c2db056a0c5edbcc75f
  *                     text:
  *                       type: string
- *                       example: publicacion 2
+ *                       example: publicacion 42
  *                     createdAt:
  *                       type: string
  *                       format: date-time
@@ -449,15 +447,15 @@ const UserPosts = async (req, res) => {
  *                       type: string
  *                       example: Post-1754113207437-default.png
  *       400:
- *         description: Archivo no válido o faltante
+ *         description: Invalid or missing file
  *       401:
- *         description: No autorizado, token JWT inválido o ausente
+ *         description: Unauthorized. Invalid or missing token.
  *       403:
- *         description: No tienes permiso para modificar esta publicación
+ *         description: You do not have permission to edit this post.
  *       404:
- *         description: Publicación no encontrada
+ *         description: Post not found
  *       500:
- *         description: Error interno del servidor
+ *         description: Internal Server Error
  */
 const UploadImage = async (req, res) => {
   let file = req.file;
@@ -499,7 +497,7 @@ const UploadImage = async (req, res) => {
  * @swagger
  * /api/v1/post/postImage/{id}:
  *   get:
- *     summary: Obtener la imagen asociada a una publicación
+ *     summary: Get the image associated with a post
  *     tags:
  *       - Post
  *     security:
@@ -508,13 +506,13 @@ const UploadImage = async (req, res) => {
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID del post cuya imagen se desea obtener
+ *         description: ID of the post whose image you want to obtain
  *         schema:
  *           type: string
  *           example: 68899c2db056a0c5edbcc75f
  *     responses:
  *       200:
- *         description: Imagen devuelta exitosamente
+ *         description: Image returned successfully
  *         content:
  *           image/jpeg:
  *             schema:
@@ -529,11 +527,11 @@ const UploadImage = async (req, res) => {
  *               type: string
  *               format: binary
  *       401:
- *         description: No autorizado, token JWT inválido o ausente
+ *         description: Unauthorized. Invalid or missing token.
  *       404:
- *         description: Imagen no encontrada
+ *         description: Image not found
  *       500:
- *         description: Error interno del servidor
+ *         description: Internal Server Error
  */
 const PostImage = async (req, res) => {
   let postImage;
@@ -554,7 +552,7 @@ const PostImage = async (req, res) => {
  * @swagger
  * /api/v1/post/feed/{page}:
  *   get:
- *     summary: Obtener el feed de publicaciones de los usuarios seguidos
+ *     summary: Get the feed of posts from followed users
  *     tags:
  *       - Post
  *     security:
@@ -563,13 +561,13 @@ const PostImage = async (req, res) => {
  *       - in: path
  *         name: page
  *         required: false
- *         description: Número de página para paginación (por defecto 1)
+ *         description: Page number for pagination (default 1)
  *         schema:
  *           type: integer
  *           example: 1
  *     responses:
  *       200:
- *         description: Feed obtenido exitosamente
+ *         description: Feed successfully obtained
  *         content:
  *           application/json:
  *             schema:
@@ -641,9 +639,9 @@ const PostImage = async (req, res) => {
  *                             format: date-time
  *                             example: 2025-07-29T02:53:20.917Z
  *       401:
- *         description: No autorizado, token JWT inválido o ausente
+ *         description: Unauthorized. Invalid or missing token.
  *       500:
- *         description: Error interno del servidor
+ *         description: Internal Server Error
  */
 const Feed = async (req, res) => {
   let feed;

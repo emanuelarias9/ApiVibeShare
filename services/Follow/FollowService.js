@@ -12,14 +12,14 @@ const CleanBody = require("../../utilitario/CleanBody");
 const FollowUser = async (params, userLoggedId) => {
   let cleanParams;
   if (!params) {
-    throw new BadRequest("El parámetro followed es obligatorio");
+    throw new BadRequest("The followed parameter is required");
   }
   cleanParams = CleanBody(params);
   let followedId = cleanParams.followed;
   let followExists = await ValidateFollow(followedId, userLoggedId);
 
   if (followExists) {
-    throw new Conflict(`ya sigues a este usuario`);
+    throw new Conflict(`You already follow this user`);
   }
 
   const userFollowed = new followModel({
@@ -30,7 +30,7 @@ const FollowUser = async (params, userLoggedId) => {
   await userFollowed.save();
 
   if (!userFollowed) {
-    throw new InternalServerError("Error al registrar el seguimiento");
+    throw new InternalServerError("Error following user");
   }
 
   return userFollowed;
@@ -40,7 +40,7 @@ const UnfollowUser = async (followedId, userLoggedId) => {
   let followExists = await ValidateFollow(followedId, userLoggedId);
 
   if (!followExists) {
-    throw new NotFound(`No sigues a este usuario`);
+    throw new NotFound(`You don't follow this user`);
   }
 
   const userUnfollowed = await followModel.findOneAndDelete({
@@ -49,7 +49,7 @@ const UnfollowUser = async (followedId, userLoggedId) => {
   });
 
   if (!userUnfollowed) {
-    throw new InternalServerError("Error al eliminar el seguimiento");
+    throw new InternalServerError("Error unfollowing user");
   }
 
   return userUnfollowed;
@@ -57,17 +57,17 @@ const UnfollowUser = async (followedId, userLoggedId) => {
 
 const ValidateFollow = async (followedId, userLoggedId) => {
   if (!followedId || !validator.isMongoId(followedId)) {
-    throw new BadRequest("El ID del usuario no es válido: followedId");
+    throw new BadRequest("Invalid user ID: followedId");
   }
 
   if (!userLoggedId || !validator.isMongoId(userLoggedId)) {
-    throw new BadRequest("El ID del usuario no es válido: userLoggedId");
+    throw new BadRequest("Invalid user ID: userLoggedId");
   }
 
   let exist = await ValidateIdExist(followedId);
 
   if (!exist) {
-    throw new NotFound("El usuario no existe.");
+    throw new NotFound("User not found.");
   }
 
   const followExists = await followModel
@@ -82,7 +82,7 @@ const ValidateFollow = async (followedId, userLoggedId) => {
 const FollowingList = async (params, userLoggedId) => {
   let cleanParams;
   if (!params) {
-    throw new BadRequest("Los parámetros son obligatorios");
+    throw new BadRequest("Parameters are required");
   }
   cleanParams = CleanBody(params);
   let page = parseInt(cleanParams.page || 1);
@@ -106,7 +106,7 @@ const FollowingList = async (params, userLoggedId) => {
   };
 
   if (!userId || !validator.isMongoId(userId)) {
-    throw new BadRequest("El ID del usuario no es válido");
+    throw new BadRequest("Invalid user ID");
   }
 
   // @ts-ignore
@@ -122,7 +122,7 @@ const FollowingList = async (params, userLoggedId) => {
 const FollowersList = async (params, userLoggedId) => {
   let cleanParams;
   if (!params) {
-    throw new BadRequest("Los parámetros son obligatorios");
+    throw new BadRequest("Parameters are required");
   }
   cleanParams = CleanBody(params);
   let page = parseInt(cleanParams.page || 1);
@@ -146,7 +146,7 @@ const FollowersList = async (params, userLoggedId) => {
   };
 
   if (!userId || !validator.isMongoId(userId)) {
-    throw new BadRequest("El ID del usuario no es válido");
+    throw new BadRequest("Invalid user ID");
   }
 
   // @ts-ignore
@@ -194,11 +194,11 @@ const FollowersListLoggedUser = async (userLoggedId) => {
 const FollowUserInfo = async (userProfileId, userLoggedId) => {
   let follower, following;
   if (!userProfileId || !validator.isMongoId(userProfileId)) {
-    throw new BadRequest("El ID del usuario no es válido: userProfileId");
+    throw new BadRequest("Invalid user ID: userProfileId");
   }
 
   if (!userLoggedId || !validator.isMongoId(userLoggedId)) {
-    throw new BadRequest("El ID del usuario no es válido: userLoggedId");
+    throw new BadRequest("Invalid user ID: userLoggedId");
   }
 
   following = await followModel

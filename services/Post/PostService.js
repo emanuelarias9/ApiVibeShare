@@ -16,7 +16,7 @@ const SavePost = async (params, userId) => {
   let newPost;
   let cleanParams;
   if (!params) {
-    throw new BadRequest("Los parámetros son obligatorios");
+    throw new BadRequest("Parameters are required");
   }
 
   cleanParams = CleanBody(params);
@@ -51,7 +51,7 @@ const GetPostById = async (postId) => {
     })
     .exec();
   if (!post) {
-    throw new NotFound("Publicacion no encontrada");
+    throw new NotFound("Post not found");
   }
   return post;
 };
@@ -67,7 +67,7 @@ const DeletePost = async (postId, userId) => {
   } = await validateOwnership(postModel, postId, userId);
 
   if (!exists) {
-    throw new NotFound("Publicacion no encontrada");
+    throw new NotFound("Post not found");
   }
   if (!isOwner) {
     throw new Forbidden("No tienes permiso para eliminar esta publicación");
@@ -82,7 +82,7 @@ const GetUserPosts = async (params) => {
   let cleanParams, userId, posts, page;
 
   if (!params) {
-    throw new BadRequest("Los parámetros son obligatorios");
+    throw new BadRequest("Parameters are required");
   }
 
   cleanParams = CleanBody(params);
@@ -90,7 +90,7 @@ const GetUserPosts = async (params) => {
   page = parseInt(cleanParams.page || 1);
   userId = cleanParams.id;
   if (!userId || !validator.isMongoId(userId)) {
-    throw new BadRequest("El ID de usuario no es válido");
+    throw new BadRequest("Invalid user ID");
   }
 
   const options = {
@@ -115,14 +115,14 @@ const UploadPostImage = async (userId, params, file) => {
   let cleanParams, postId;
   if (!params) {
     DeleteImage(file.filename);
-    throw new BadRequest("Los parámetros son obligatorios");
+    throw new BadRequest("Parameters are required");
   }
 
   cleanParams = CleanBody(params);
   postId = cleanParams.id;
   if (!postId || !validator.isMongoId(postId)) {
     DeleteImage(file.filename, "post");
-    throw new BadRequest("El ID de publicacion no es válido");
+    throw new BadRequest("Invalid post ID");
   }
 
   let {
@@ -133,11 +133,11 @@ const UploadPostImage = async (userId, params, file) => {
 
   if (!exists) {
     DeleteImage(file.filename, "post");
-    throw new NotFound("Publicacion no encontrada");
+    throw new NotFound("Post not found");
   }
   if (!isOwner) {
     DeleteImage(file.filename, "post");
-    throw new Forbidden("No tienes permiso para modificar esta publicación");
+    throw new Forbidden("You do not have permission to edit this post.");
   }
 
   postUpdated = await postModel
@@ -150,7 +150,7 @@ const UploadPostImage = async (userId, params, file) => {
 
   if (!postUpdated) {
     DeleteImage(file.filename, "post");
-    throw new InternalServerError("No se pudo modificar la Publicacion");
+    throw new InternalServerError("The post could not be modified.");
   }
   DeleteImage(postUpdated.file, "post"); //Eliminar la imagen anterior
   return postUpdated;
@@ -161,13 +161,13 @@ const GetPostImage = async (params) => {
   cleanParams = CleanBody(params);
   postId = cleanParams.id;
   if (!validator.isMongoId(postId)) {
-    throw new BadRequest("El ID de publicacion no es válido");
+    throw new BadRequest("Invalid post ID");
   }
 
   const post = await postModel.findById(postId).exec();
 
   if (!post) {
-    throw new NotFound("Publicacion no encontrada");
+    throw new NotFound("Post not found");
   }
 
   let filepath = path.resolve(`./uploads/posts/${post.file}`);
@@ -199,7 +199,7 @@ const GetFeed = async (userId, params) => {
   // @ts-ignore
   feed = await postModel.paginate({ user: { $in: following } }, options);
   if (!feed) {
-    throw new InternalServerError("Error al obtener el feed.");
+    throw new InternalServerError("Error getting feed.");
   }
   return feed;
 };

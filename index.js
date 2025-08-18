@@ -21,7 +21,7 @@ const swaggerOptions = {
       title: "API VibeShare",
       version: "1.0.0",
       description:
-        "Documentación para la Api Rest de la red social VibeShare creada con NodeJS, expressJS y mongoose",
+        "Documentation for the VibeShare REST API, created with NodeJS, ExpressJS, and Mongoose.",
     },
     servers: [{ url: process.env.HOST_URL }],
     components: {
@@ -30,7 +30,7 @@ const swaggerOptions = {
           type: "http",
           scheme: "bearer",
           bearerFormat: "JWT",
-          description: "Introduce el token JWT en el formato: Bearer <token>",
+          description: "Enter the JWT token in the format: Bearer <token>",
         },
       },
     },

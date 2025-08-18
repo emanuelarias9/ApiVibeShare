@@ -18,45 +18,45 @@ const CleanBody = require("../../utilitario/CleanBody");
 const ValidateBasicInfoUser = (params) => {
   let cleanParams;
   if (!params) {
-    throw new BadRequest("Los parámetros son obligatorios");
+    throw new BadRequest("Parameters are required");
   }
   cleanParams = CleanBody(params);
   if (
     !cleanParams.username ||
     validator.isEmpty(cleanParams.username, { ignore_whitespace: true })
   ) {
-    throw new BadRequest("El nombre de usuario es obligatorio");
+    throw new BadRequest("Username is required");
   }
   if (
     !cleanParams.nick ||
     validator.isEmpty(cleanParams.nick, { ignore_whitespace: true })
   ) {
-    throw new BadRequest("El nick es obligatorio");
+    throw new BadRequest("The nickname is required");
   }
   if (
     !cleanParams.email ||
     validator.isEmpty(cleanParams.email, { ignore_whitespace: true })
   ) {
-    throw new BadRequest("El email es obligatorio");
+    throw new BadRequest("Email is required");
   }
   if (!validator.isEmail(cleanParams.email)) {
-    throw new BadRequest("El email no es válido");
+    throw new BadRequest("The email is invalid");
   }
   if (
     !cleanParams.password ||
     validator.isEmpty(cleanParams.password, { ignore_whitespace: true })
   ) {
-    throw new BadRequest("La contraseña es obligatoria");
+    throw new BadRequest("Password is required");
   }
   if (cleanParams.password.length < 8) {
-    throw new BadRequest("La contraseña debe tener al menos 8 caracteres");
+    throw new BadRequest("The password must be at least 8 characters long.");
   }
 };
 
 const ValidateUserExists = async (params) => {
   let cleanParams;
   if (!params) {
-    throw new BadRequest("Los parámetros son obligatorios");
+    throw new BadRequest("Parameters are required");
   }
   cleanParams = CleanBody(params);
   let email;
@@ -76,53 +76,53 @@ const ValidateUserExists = async (params) => {
     .exec();
 
   if (userExists && userExists.email === email) {
-    throw new Conflict(`El email ${email} ya está registrado`);
+    throw new Conflict(`The email ${email} is already registered`);
   }
 
   if (userExists && userExists.username === username) {
-    throw new Conflict(`El nombre de usuario ${username} ya está registrado`);
+    throw new Conflict(`The username ${username} is already registered`);
   }
 };
 
 const ValidateLoginInfo = (params) => {
   let cleanParams;
   if (!params) {
-    throw new BadRequest("Los parámetros son obligatorios");
+    throw new BadRequest("Parameters are required");
   }
   cleanParams = CleanBody(params);
   if (
     !cleanParams.email ||
     validator.isEmpty(cleanParams.email, { ignore_whitespace: true })
   ) {
-    throw new BadRequest("No has ingresado el email");
+    throw new BadRequest("You have not entered the email");
   }
   if (!validator.isEmail(cleanParams.email)) {
-    throw new BadRequest("El email no es válido");
+    throw new BadRequest("Invalid Email");
   }
   if (
     !cleanParams.password ||
     validator.isEmpty(cleanParams.password, { ignore_whitespace: true })
   ) {
-    throw new BadRequest("No has ingresado la contraseña");
+    throw new BadRequest("You have not entered the password");
   }
 };
 
 const ValidateLoginCredentials = async (params) => {
   let cleanParams;
   if (!params) {
-    throw new BadRequest("Los parámetros son obligatorios");
+    throw new BadRequest("Parameters are required");
   }
   cleanParams = CleanBody(params);
   const email = cleanParams.email.toLowerCase();
   const user = await userModel.findOne({ email }).exec();
 
   if (!user) {
-    throw new NotFound("El usuario no existe");
+    throw new NotFound("The user does not exist");
   }
 
   let password = bcrypt.compareSync(cleanParams.password, user.password);
   if (password === false) {
-    throw new Unauthorized("La contraseña es incorrecta");
+    throw new Unauthorized("Wrong password");
   }
 
   return user;
@@ -136,14 +136,14 @@ const ValidateIdExist = async (id) => {
 
 const GetUserById = async (userId) => {
   if (!userId || !validator.isMongoId(userId)) {
-    throw new BadRequest("El ID del usuario no es válido");
+    throw new BadRequest("Invalid user ID");
   }
   const user = await userModel
     .findById(userId)
     .select({ password: 0, role: 0 })
     .exec();
   if (!user) {
-    throw new NotFound("Usuario no encontrado");
+    throw new NotFound("User not found");
   }
   return user;
 };
@@ -159,7 +159,7 @@ const GetAllUsers = async (page, pageSize) => {
   let result = await userModel.paginate({}, options);
 
   if (!result) {
-    throw new InternalServerError("Error al obtener los usuarios");
+    throw new InternalServerError("Error getting users");
   }
 
   return result;
@@ -174,7 +174,7 @@ const UpdateUserInfo = async (userId, infoUpdate) => {
   delete infoUpdate.image;
 
   if (!userId || !validator.isMongoId(userId)) {
-    throw new BadRequest("El ID del usuario no es válido");
+    throw new BadRequest("Invalid user ID");
   }
 
   if (infoUpdate.password) {
@@ -185,7 +185,7 @@ const UpdateUserInfo = async (userId, infoUpdate) => {
   if (infoUpdate.email) {
     infoUpdate.email = infoUpdate.email.toLowerCase();
     if (!validator.isEmail(infoUpdate.email.trim())) {
-      throw new BadRequest("El email no es válido");
+      throw new BadRequest("The email is invalid");
     }
   }
 
@@ -200,7 +200,7 @@ const UpdateUserInfo = async (userId, infoUpdate) => {
     .exec();
 
   if (!updatedUser) {
-    throw new NotFound("Usuario no encontrado para actualizar");
+    throw new NotFound("User not found to update");
   }
 };
 
@@ -208,7 +208,7 @@ const UpdateUserImage = async (userId, file) => {
   let userImageUpdated;
 
   if (!userId || !validator.isMongoId(userId)) {
-    throw new BadRequest("El ID del usuario no es válido");
+    throw new BadRequest("Invalid user ID");
   }
 
   userImageUpdated = await userModel
@@ -216,7 +216,7 @@ const UpdateUserImage = async (userId, file) => {
     .exec();
 
   if (!userImageUpdated) {
-    throw new NotFound("Usuario no encontrado para actualizar");
+    throw new NotFound("User not found to update");
   }
 
   DeleteImage(userImageUpdated.image);
@@ -224,13 +224,13 @@ const UpdateUserImage = async (userId, file) => {
 
 const GetUserAvatar = async (userId) => {
   if (!userId || !validator.isMongoId(userId)) {
-    throw new BadRequest("El ID del usuario no es válido");
+    throw new BadRequest("Invalid user ID");
   }
 
   const user = await userModel.findById(userId).exec();
 
   if (!user) {
-    throw new NotFound("Usuario no encontrado");
+    throw new NotFound("User not found");
   }
 
   let filepath = path.resolve(`./uploads/users/avatars/${user.image}`);
@@ -239,12 +239,12 @@ const GetUserAvatar = async (userId) => {
 };
 const GetCounters = async (userId) => {
   if (!userId || !validator.isMongoId(userId)) {
-    throw new BadRequest("El ID del usuario no es válido");
+    throw new BadRequest("Invalid user ID");
   }
 
   const exists = ValidateIdExist(userId);
   if (!exists) {
-    throw new NotFound("Usuario no encontrado");
+    throw new NotFound("User not found");
   }
 
   const counters = await Promise.allSettled([

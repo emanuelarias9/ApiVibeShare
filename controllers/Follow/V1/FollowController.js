@@ -1,6 +1,3 @@
-const followModel = require("../../../models/Follow");
-const userModel = require("../../../models/User");
-const CleanBody = require("../../../utilitario/CleanBody");
 const {
   FollowUser,
   UnfollowUser,
@@ -12,7 +9,7 @@ const {
  * @swagger
  * /Api/v1/follow/followUser:
  *   post:
- *     summary: Seguir a un usuario
+ *     summary: Follow a user
  *     tags:
  *       - Follow
  *     security:
@@ -28,11 +25,11 @@ const {
  *             properties:
  *               followed:
  *                 type: string
- *                 description: ID del usuario al que se quiere seguir
+ *                 description: ID of the user you want to follow
  *                 example: 64a1efbce5b4f20012d34a23
  *     responses:
  *       200:
- *         description: Usuario seguido con éxito
+ *         description: User followed successfully
  *         content:
  *           application/json:
  *             schema:
@@ -46,15 +43,15 @@ const {
  *                   example: 200
  *                 message:
  *                   type: string
- *                   example: Ahora sigues a este usuario
+ *                   example: You are now following this user
  *                 followSaved:
  *                   $ref: '#/components/schemas/Follow'
  *       400:
- *         description: Error de validación o parámetros incorrectos
+ *         description: Invalid data in the request
  *       401:
- *         description: No autorizado, token JWT inválido o ausente
+ *         description: Unauthorized. Invalid or missing token.
  *       500:
- *         description: Error interno del servidor
+ *         description: Internal Server Error
  */
 const Follow = async (req, res) => {
   const params = req.body;
@@ -74,7 +71,7 @@ const Follow = async (req, res) => {
   res.status(200).json({
     status: "OK",
     statusCode: 200,
-    message: "Ahora sigues a este usuario",
+    message: "You are now following this user",
     followSaved,
   });
 };
@@ -83,7 +80,7 @@ const Follow = async (req, res) => {
  * @swagger
  * /Api/v1/follow/unfollowUser/{id}:
  *   delete:
- *     summary: Dejar de seguir a un usuario
+ *     summary: Unfollow a user
  *     tags:
  *       - Follow
  *     security:
@@ -92,13 +89,13 @@ const Follow = async (req, res) => {
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID del usuario al que se dejará de seguir
+ *         description: ID of the user to be unfollowed
  *         schema:
  *           type: string
  *           example: 64a1efbce5b4f20012d34a23
  *     responses:
  *       200:
- *         description: Usuario dejado de seguir con éxito
+ *         description: User successfully unfollowed
  *         content:
  *           application/json:
  *             schema:
@@ -112,15 +109,15 @@ const Follow = async (req, res) => {
  *                   example: 200
  *                 message:
  *                   type: string
- *                   example: Ya no sigues a este usuario
+ *                   example: You no longer follow this user
  *       400:
- *         description: Error de validación o parámetros incorrectos
+ *         description: Invalid data in the request
  *       401:
- *         description: No autorizado, token JWT inválido o ausente
+ *         description: Unauthorized. Invalid or missing token.
  *       404:
- *         description: El seguimiento no existe
+ *         description: You don't follow this user.
  *       500:
- *         description: Error interno del servidor
+ *         description: Internal Server Error
  */
 const Unfollow = async (req, res) => {
   const followedId = req.params.id;
@@ -139,7 +136,7 @@ const Unfollow = async (req, res) => {
   res.status(200).json({
     status: "OK",
     statusCode: 200,
-    message: "Ya no sigues a este usuario",
+    message: "You no longer follow this user",
   });
 };
 
@@ -147,7 +144,7 @@ const Unfollow = async (req, res) => {
  * @swagger
  * /Api/v1/follow/following/{page}/{id}:
  *   get:
- *     summary: Obtener la lista de usuarios que un usuario está siguiendo
+ *     summary: Get the list of users that a user is following
  *     tags:
  *       - Follow
  *     security:
@@ -156,20 +153,20 @@ const Unfollow = async (req, res) => {
  *       - in: path
  *         name: page
  *         required: false
- *         description: Número de página para paginación (por defecto 1)
+ *         description: Page number for pagination (default 1)
  *         schema:
  *           type: integer
  *           example: 1
  *       - in: path
  *         name: id
  *         required: false
- *         description: ID del usuario del que se quieren ver los seguidos (si se omite, se usa el usuario logueado)
+ *         description: ID of the user whose following you want to see (if omitted, the logged-in user is used)
  *         schema:
  *           type: string
  *           example: 688276fcf3c903785f5de454
  *     responses:
  *       200:
- *         description: Lista de usuarios seguidos
+ *         description: List of followed users
  *         content:
  *           application/json:
  *             schema:
@@ -183,7 +180,7 @@ const Unfollow = async (req, res) => {
  *                   example: 200
  *                 message:
  *                   type: string
- *                   example: Listado de usuarios a los que sigues
+ *                   example: List of users you follow
  *                 following:
  *                   type: object
  *                   properties:
@@ -206,7 +203,7 @@ const Unfollow = async (req, res) => {
  *                         properties:
  *                           user:
  *                             type: string
- *                             description: ID del usuario que sigue
+ *                             description: ID of the user you are following
  *                             example: 688276fcf3c903785f5de454
  *                           followed:
  *                             type: object
@@ -233,20 +230,20 @@ const Unfollow = async (req, res) => {
  *                             example: 2025-07-25T04:08:13.400Z
  *                 followingLoggedUser:
  *                   type: array
- *                   description: Lista de IDs que el usuario logueado sigue
+ *                   description: List of IDs that the logged in user follows
  *                   items:
  *                     type: string
  *                     example: 68826f5db2dcc94a75398a84
  *                 followersLoggedUser:
  *                   type: array
- *                   description: Lista de IDs que siguen al usuario logueado
+ *                   description: List of IDs that follow the logged in user
  *                   items:
  *                     type: string
  *                     example: 688276fcf3c903785f5de454
  *       401:
- *         description: No autorizado, token JWT inválido o ausente
+ *         description: Unauthorized. Invalid or missing token.
  *       500:
- *         description: Error interno del servidor
+ *         description: Internal Server Error
  */
 
 const Following = async (req, res) => {
@@ -265,7 +262,7 @@ const Following = async (req, res) => {
   res.status(200).json({
     status: "OK",
     statusCode: 200,
-    message: "Listado de usuarios a los que sigues",
+    message: "List of users you follow",
     following: {
       page: followingList.page,
       pageSize: followingList.limit,
@@ -286,7 +283,7 @@ const Following = async (req, res) => {
  * @swagger
  * /Api/v1/follow/followers/{page}/{id}:
  *   get:
- *     summary: Obtener la lista de usuarios que siguen a un usuario
+ *     summary: Get the list of users who follow a user
  *     tags:
  *       - Follow
  *     security:
@@ -295,20 +292,20 @@ const Following = async (req, res) => {
  *       - in: path
  *         name: page
  *         required: false
- *         description: Número de página para paginación (por defecto 1)
+ *         description: Page number for pagination (default 1)
  *         schema:
  *           type: integer
  *           example: 1
  *       - in: path
  *         name: id
  *         required: false
- *         description: ID del usuario del que se quieren ver los seguidores (si se omite, se usa el usuario logueado)
+ *         description: ID of the user whose followers you want to see (if omitted, the logged-in user is used)
  *         schema:
  *           type: string
  *           example: 64a1ef98e5b4f20012d349fe
  *     responses:
  *       200:
- *         description: Lista de usuarios que siguen al usuario
+ *         description: List of users following the user
  *         content:
  *           application/json:
  *             schema:
@@ -322,7 +319,7 @@ const Following = async (req, res) => {
  *                   example: 200
  *                 message:
  *                   type: string
- *                   example: Listado de usuarios que te siguen
+ *                   example: List of users who follow you
  *                 followers:
  *                   type: object
  *                   properties:
@@ -364,7 +361,7 @@ const Following = async (req, res) => {
  *                                 example: default.png
  *                           followed:
  *                             type: string
- *                             description: ID del usuario que está siendo seguido (el usuario logueado o el especificado en la ruta)
+ *                             description: ID of the user being followed (the logged-in user or the one specified in the path)
  *                             example: 68788e3cf8d7114cece523ab
  *                           createdAt:
  *                             type: string
@@ -372,20 +369,20 @@ const Following = async (req, res) => {
  *                             example: 2025-07-25T04:08:13.400Z
  *                 followingLoggedUser:
  *                   type: array
- *                   description: Lista de IDs que el usuario logueado sigue
+ *                   description: List of IDs that the logged in user follows
  *                   items:
  *                     type: string
  *                     example: 64a1efbce5b4f20012d34a23
  *                 followersLoggedUser:
  *                   type: array
- *                   description: Lista de IDs que siguen al usuario logueado
+ *                   description: List of IDs that follow the logged in user
  *                   items:
  *                     type: string
  *                     example: 64a1ef98e5b4f20012d349fe
  *       401:
- *         description: No autorizado, token JWT inválido o ausente
+ *         description: Unauthorized. Invalid or missing token.
  *       500:
- *         description: Error interno del servidor
+ *         description: Internal Server Error
  */
 const Followers = async (req, res) => {
   let followersList, followingListLoggedUser, followersListLoggedUser;
@@ -403,7 +400,7 @@ const Followers = async (req, res) => {
   res.status(200).json({
     status: "OK",
     statusCode: 200,
-    message: "Listado de usuarios que te sigen",
+    message: "List of users who follow you",
     followers: {
       page: followersList.page,
       pageSize: followersList.limit,
