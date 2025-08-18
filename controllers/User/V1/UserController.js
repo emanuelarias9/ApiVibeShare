@@ -15,7 +15,6 @@ const {
   GetCounters,
 } = require("../../../services/User/UserService");
 const jwt = require("../../../utilitario/jwt");
-const CleanBody = require("../../../utilitario/CleanBody");
 const { ValidateImage } = require("../../../utilitario/ValidateImage");
 const {
   FollowUserInfo,
@@ -27,7 +26,7 @@ const {
  * @swagger
  * /api/v1/user/signup:
  *   post:
- *     summary: Registrar un nuevo usuario
+ *     summary: Register a new user
  *     tags:
  *       - User
  *     requestBody:
@@ -58,10 +57,10 @@ const {
  *                 example: "12345678"
  *               bio:
  *                 type: string
- *                 example: "Desarrollador full-stack"
+ *                 example: "Developer full-stack"
  *     responses:
  *       201:
- *         description: Usuario creado exitosamente
+ *         description: User created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -75,13 +74,13 @@ const {
  *                   example: 201
  *                 message:
  *                   type: string
- *                   example: Usuario emanuelarias registrado correctamente
+ *                   example: User emanuelarias registered successfully
  *       400:
- *         description: Datos inválidos en la solicitud
+ *         description: Invalid data in the request
  *       409:
- *         description: El usuario ya existe
+ *         description: The user or email is already registered
  *       500:
- *         description: Error interno del servidor
+ *         description: Internal Server Error
  */
 
 const SignUpUser = async (req, res) => {
@@ -121,14 +120,14 @@ const SignUpUser = async (req, res) => {
     return res.status(500).json({
       status: "Internal Server Error",
       statusCode: 500,
-      message: "Error al registrar el usuario",
+      message: "Error registering user",
     });
   }
 
   return res.status(201).json({
     status: "Created",
     statusCode: 201,
-    message: `Usuario ${userSaved.username} registrado correctamente`,
+    message: `User ${userSaved.username} successfully registered`,
   });
 };
 
@@ -136,10 +135,10 @@ const SignUpUser = async (req, res) => {
  * @swagger
  * /api/v1/user/login:
  *   post:
- *     summary: Iniciar sesión de usuario
+ *     summary: User login
  *     tags:
  *       - User
- *     description: Valida las credenciales del usuario y devuelve un token JWT si el inicio de sesión es exitoso.
+ *     description: Validates the user's credentials and returns a JWT token if the login is successful.
  *     requestBody:
  *       required: true
  *       content:
@@ -160,7 +159,7 @@ const SignUpUser = async (req, res) => {
  *                 example: "12345678"
  *     responses:
  *       200:
- *         description: Login exitoso. Devuelve un token JWT.
+ *         description: Login successful. Returns a JWT token.
  *         content:
  *           application/json:
  *             schema:
@@ -179,9 +178,9 @@ const SignUpUser = async (req, res) => {
  *                   type: string
  *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
  *       400:
- *         description: Parámetros de entrada inválidos
+ *         description: Invalid data in the request
  *       401:
- *         description: Credenciales incorrectas
+ *         description: Unauthorized. Invalid or missing token.
  */
 const Login = async (req, res) => {
   let params = req.body;
@@ -222,7 +221,7 @@ const Login = async (req, res) => {
  * @swagger
  * /api/v1/user/profile/{id}:
  *   get:
- *     summary: Obtener el perfil de un usuario por ID
+ *     summary: Get a user's profile by ID
  *     tags:
  *       - User
  *     security:
@@ -233,10 +232,10 @@ const Login = async (req, res) => {
  *         required: true
  *         schema:
  *           type: string
- *         description: ID del usuario
+ *         description: User ID
  *     responses:
  *       200:
- *         description: Perfil del usuario obtenido exitosamente
+ *         description: User profile obtained successfully
  *         content:
  *           application/json:
  *             schema:
@@ -251,9 +250,9 @@ const Login = async (req, res) => {
  *                 user:
  *                   $ref: '#/components/schemas/User'
  *       404:
- *         description: Usuario no encontrado
+ *         description: User not found
  *       401:
- *         description: Token no válido o no enviado
+ *         description: Unauthorized. Invalid or missing token.
  */
 
 const GetUserProfile = async (req, res) => {
@@ -293,7 +292,7 @@ const GetUserProfile = async (req, res) => {
  * @swagger
  * /api/v1/user/list/{page}:
  *   get:
- *     summary: Obtener listado paginado de usuarios
+ *     summary: Get paginated list of users
  *     tags:
  *       - User
  *     security:
@@ -304,10 +303,10 @@ const GetUserProfile = async (req, res) => {
  *         schema:
  *           type: integer
  *           default: 1
- *         description: Número de página (opcional, por defecto 1)
+ *         description: Page number (optional, default 1)
  *     responses:
  *       200:
- *         description: Lista de usuarios obtenida exitosamente
+ *         description: User list successfully obtained
  *         content:
  *           application/json:
  *             schema:
@@ -336,9 +335,9 @@ const GetUserProfile = async (req, res) => {
  *                   items:
  *                     $ref: '#/components/schemas/User'
  *       401:
- *         description: No autorizado. Token inválido o ausente.
+ *         description: Unauthorized. Invalid or missing token.
  *       500:
- *         description: Error al obtener usuarios
+ *         description: Internal Server Error
  */
 
 const GetUsers = async (req, res) => {
@@ -396,7 +395,7 @@ const GetUsers = async (req, res) => {
  * @swagger
  * /api/v1/user/update:
  *   put:
- *     summary: Actualizar datos del usuario autenticado
+ *     summary: Update authenticated user data
  *     tags:
  *       - User
  *     security:
@@ -426,7 +425,7 @@ const GetUsers = async (req, res) => {
  *                 example: 1752729792507
  *     responses:
  *       200:
- *         description: Usuario actualizado correctamente
+ *         description: Successfully updated user
  *         content:
  *           application/json:
  *             schema:
@@ -446,13 +445,13 @@ const GetUsers = async (req, res) => {
  *                 infoUpdate:
  *                   type: object
  *       400:
- *         description: Datos inválidos
+ *         description: Invalid data in the request
  *       409:
- *         description: El usuario o email ya están registrados
+ *         description: The user or email is already registered
  *       401:
- *         description: No autorizado. Token no válido o no enviado
+ *         description: Unauthorized. Invalid or missing token.
  *       500:
- *         description: Error interno al actualizar el usuario
+ *         description: Internal Server Error
  */
 
 const UpdateUser = async (req, res) => {
@@ -493,7 +492,7 @@ const UpdateUser = async (req, res) => {
  * @swagger
  * /api/v1/user/updateImage:
  *   post:
- *     summary: Actualizar la imagen de perfil del usuario
+ *     summary: Update the user's profile picture
  *     tags:
  *       - User
  *     security:
@@ -508,10 +507,10 @@ const UpdateUser = async (req, res) => {
  *               image:
  *                 type: string
  *                 format: binary
- *                 description: Imagen a subir ("png", "jpg", "jpeg")
+ *                 description: Image to upload ("png", "jpg", "jpeg")
  *     responses:
  *       200:
- *         description: Imagen actualizada exitosamente
+ *         description: Image updated successfully
  *         content:
  *           application/json:
  *             schema:
@@ -530,11 +529,11 @@ const UpdateUser = async (req, res) => {
  *                   type: string
  *                   example: imagen123.png
  *       400:
- *         description: Archivo inválido o faltante
+ *         description: Invalid or missing file
  *       401:
- *         description: No autorizado. Token inválido o no enviado
+ *         description: Unauthorized. Invalid or missing token.
  *       500:
- *         description: Error interno al subir la imagen
+ *         description: Internal Server Error
  */
 const UploadImage = (req, res) => {
   let file = req.file;
@@ -571,14 +570,14 @@ const UploadImage = (req, res) => {
  * @swagger
  * /api/v1/user/avatar:
  *   get:
- *     summary: Obtener la imagen de perfil del usuario autenticado
+ *     summary: Get the profile picture of the authenticated user
  *     tags:
  *       - User
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Imagen devuelta exitosamente
+ *         description: Image returned successfully
  *         content:
  *           image/png:
  *             schema:
@@ -589,11 +588,11 @@ const UploadImage = (req, res) => {
  *               type: string
  *               format: binary
  *       401:
- *         description: No autorizado. Token inválido o ausente
+ *         description: Unauthorized. Invalid or missing token.
  *       404:
- *         description: Imagen no encontrada
+ *         description: Image not found
  *       500:
- *         description: Error interno al obtener el avatar
+ *         description: Internal Server Error
  */
 
 const Avatar = async (req, res) => {
@@ -615,7 +614,7 @@ const Avatar = async (req, res) => {
  * @swagger
  * /api/v1/user/counters/{id}:
  *   get:
- *     summary: Obtener contadores de actividad de un usuario (posts, seguidores y seguidos)
+ *     summary: Get a user's activity counters (posts, followers, and following)
  *     tags:
  *       - User
  *     security:
@@ -624,13 +623,13 @@ const Avatar = async (req, res) => {
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID del usuario del que se quieren obtener los contadores
+ *         description: ID of the user from whom you want to obtain the counters
  *         schema:
  *           type: string
  *           example: 68788e3cf8d7114cece523af
  *     responses:
  *       200:
- *         description: Contadores obtenidos correctamente
+ *         description: Counters obtained correctly
  *         content:
  *           application/json:
  *             schema:
@@ -644,26 +643,26 @@ const Avatar = async (req, res) => {
  *                   example: 200
  *                 userId:
  *                   type: string
- *                   description: ID del usuario al que pertenecen los contadores
+ *                   description: ID of the user to whom the counters belong
  *                   example: 68788e3cf8d7114cece523ab
  *                 posts:
  *                   type: integer
- *                   description: Número total de publicaciones del usuario
+ *                   description: Total number of posts by the user
  *                   example: 11
  *                 followers:
  *                   type: integer
- *                   description: Número de seguidores
+ *                   description: Number of followers
  *                   example: 1
  *                 following:
  *                   type: integer
- *                   description: Número de usuarios que sigue
+ *                   description: Number of users following
  *                   example: 7
  *       401:
- *         description: No autorizado, token JWT inválido o ausente
+ *         description: Unauthorized. Invalid or missing token.
  *       404:
- *         description: Usuario no encontrado
+ *         description: User not found
  *       500:
- *         description: Error interno del servidor
+ *         description: Internal Server Error
  */
 const Counters = async (req, res) => {
   let counters;

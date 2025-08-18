@@ -8,9 +8,7 @@ const authenticate = (req, res, next) => {
   let httpError, payload, token, expired, now;
 
   if (!authHeader) {
-    httpError = new Unauthorized(
-      "No se encontró la cabecera de autenticación."
-    );
+    httpError = new Unauthorized("Authentication header not found.");
     return res.status(httpError.statusCode).json({
       status: httpError.status,
       statusCode: httpError.statusCode,
@@ -28,7 +26,7 @@ const authenticate = (req, res, next) => {
     expired = jwt.decode(token, secret, true);
     now = moment().unix();
     if (expired.exp < now) {
-      httpError = new Unauthorized("El token ha expirado.");
+      httpError = new Unauthorized("The token has expired.");
       return res.status(httpError.statusCode).json({
         status: httpError.status,
         statusCode: httpError.statusCode,
@@ -39,7 +37,7 @@ const authenticate = (req, res, next) => {
     payload = jwt.decode(token, secret);
     req.user = payload;
   } catch (error) {
-    httpError = new Unauthorized("Token inválido o mal formado.");
+    httpError = new Unauthorized("Invalid or malformed token.");
     return res.status(httpError.statusCode).json({
       status: httpError.status,
       statusCode: httpError.statusCode,
