@@ -61,7 +61,6 @@ This project provides a modular architecture, integrated security, and extensive
 ## 📚 Swagger Documentation
 ```
  https://apivibeshare.onrender.com/api-docs
-
  ```
 ## Features
 
