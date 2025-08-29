@@ -32,6 +32,7 @@
 ## Table of Contents
 
 - [Overview](#overview)
+- [swagger documentation](#-swagger-documentation)
 - [Getting Started](#getting-started)
     - [Prerequisites](#prerequisites)
     - [Installation](#installation)
@@ -57,7 +58,10 @@ This project provides a modular architecture, integrated security, and extensive
 - **🗃️ Data Models & Pagination:** Robust schemas support scalable social interactions with efficient data management.
 
 ---
-
+## 📚 Swagger Documentation
+```
+ https://apivibeshare.onrender.com/api-docs
+ ```
 ## Features
 
 |      | Component          | Details                                                                                     |
