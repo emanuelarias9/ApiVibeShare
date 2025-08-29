@@ -15,123 +15,65 @@ const bcrypt = require("bcrypt");
 const { DeleteImage } = require("../../utilitario/ValidateImage");
 const CleanBody = require("../../utilitario/CleanBody");
 
-const ValidateBasicInfoUser = (params) => {
-  let cleanParams;
-  if (!params) {
-    throw new BadRequest("Parameters are required");
+const GetAllUsers = async (page, pageSize) => {
+  const options = {
+    page,
+    limit: pageSize,
+    sort: { _id: 1 },
+  };
+
+  // @ts-ignore
+  let result = await userModel.paginate({}, options);
+
+  if (!result) {
+    throw new InternalServerError("Error getting users");
   }
-  cleanParams = CleanBody(params);
-  if (
-    !cleanParams.username ||
-    validator.isEmpty(cleanParams.username, { ignore_whitespace: true })
-  ) {
-    throw new BadRequest("Username is required");
-  }
-  if (
-    !cleanParams.nick ||
-    validator.isEmpty(cleanParams.nick, { ignore_whitespace: true })
-  ) {
-    throw new BadRequest("The nickname is required");
-  }
-  if (
-    !cleanParams.email ||
-    validator.isEmpty(cleanParams.email, { ignore_whitespace: true })
-  ) {
-    throw new BadRequest("Email is required");
-  }
-  if (!validator.isEmail(cleanParams.email)) {
-    throw new BadRequest("The email is invalid");
-  }
-  if (
-    !cleanParams.password ||
-    validator.isEmpty(cleanParams.password, { ignore_whitespace: true })
-  ) {
-    throw new BadRequest("Password is required");
-  }
-  if (cleanParams.password.length < 8) {
-    throw new BadRequest("The password must be at least 8 characters long.");
-  }
+
+  return result;
 };
 
-const ValidateUserExists = async (params) => {
-  let cleanParams;
-  if (!params) {
-    throw new BadRequest("Parameters are required");
-  }
-  cleanParams = CleanBody(params);
-  let email;
-  let username;
-  if (cleanParams.email) {
-    email = cleanParams.email.toLowerCase();
+const GetCounters = async (userId) => {
+  if (!userId || !validator.isMongoId(userId)) {
+    throw new BadRequest("Invalid user ID");
   }
 
-  if (cleanParams.username) {
-    username = cleanParams.username.toLowerCase();
+  const exists = ValidateIdExist(userId);
+  if (!exists) {
+    throw new NotFound("User not found");
   }
 
-  const userExists = await userModel
-    .findOne({
-      $or: [{ email }, { username }],
-    })
-    .exec();
+  const counters = await Promise.allSettled([
+    followModel.countDocuments({ followed: userId }), // followers
+    followModel.countDocuments({ user: userId }), // following
+    postModel.countDocuments({ user: userId }), // posts
+  ]);
+  const [followersCount, followingCount, postsCount] = counters;
 
-  if (userExists && userExists.email === email) {
-    throw new Conflict(`The email ${email} is already registered`);
-  }
+  const posts = postsCount.status === "fulfilled" ? postsCount.value : 0;
 
-  if (userExists && userExists.username === username) {
-    throw new Conflict(`The username ${username} is already registered`);
-  }
+  const followers =
+    followersCount.status === "fulfilled" ? followersCount.value : 0;
+
+  const following =
+    followingCount.status === "fulfilled" ? followingCount.value : 0;
+
+  return { userId, posts, followers, following };
 };
 
-const ValidateLoginInfo = (params) => {
-  let cleanParams;
-  if (!params) {
-    throw new BadRequest("Parameters are required");
+const GetUserAvatar = async (userId) => {
+  if (!userId || !validator.isMongoId(userId)) {
+    throw new BadRequest("Invalid user ID");
   }
-  cleanParams = CleanBody(params);
-  if (
-    !cleanParams.email ||
-    validator.isEmpty(cleanParams.email, { ignore_whitespace: true })
-  ) {
-    throw new BadRequest("You have not entered the email");
-  }
-  if (!validator.isEmail(cleanParams.email)) {
-    throw new BadRequest("Invalid Email");
-  }
-  if (
-    !cleanParams.password ||
-    validator.isEmpty(cleanParams.password, { ignore_whitespace: true })
-  ) {
-    throw new BadRequest("You have not entered the password");
-  }
-};
 
-const ValidateLoginCredentials = async (params) => {
-  let cleanParams;
-  if (!params) {
-    throw new BadRequest("Parameters are required");
-  }
-  cleanParams = CleanBody(params);
-  const email = cleanParams.email.toLowerCase();
-  const user = await userModel.findOne({ email }).exec();
+  const user = await userModel.findById(userId).exec();
 
   if (!user) {
-    throw new NotFound("The user does not exist");
+    throw new NotFound("User not found");
   }
 
-  let password = bcrypt.compareSync(cleanParams.password, user.password);
-  if (password === false) {
-    throw new Unauthorized("Wrong password");
-  }
+  let filepath = path.resolve(`./uploads/users/avatars/${user.image}`);
 
-  return user;
-};
-
-const ValidateIdExist = async (id) => {
-  const count = await userModel.countDocuments({ _id: id });
-  const exist = count > 0;
-  return exist;
+  return filepath;
 };
 
 const GetUserById = async (userId) => {
@@ -148,21 +90,45 @@ const GetUserById = async (userId) => {
   return user;
 };
 
-const GetAllUsers = async (page, pageSize) => {
-  const options = {
-    page,
-    limit: pageSize,
-    sort: { _id: 1 },
+const SignUp = async (params) => {
+  ValidateBasicInfoUser(params);
+
+  const normalized = {
+    ...params,
+    email: params.email.toLowerCase().trim(),
+    username: params.username.toLowerCase().trim(),
   };
 
-  // @ts-ignore
-  let result = await userModel.paginate({}, options);
+  await ValidateUserExists(normalized);
+  const passwordEncrypted = await bcrypt.hash(normalized.password, 10);
+  normalized.password = passwordEncrypted;
 
-  if (!result) {
-    throw new InternalServerError("Error getting users");
+  const user = new userModel(normalized);
+  const userSaved = await user.save();
+
+  if (!userSaved) {
+    throw new InternalServerError("Error registering user");
   }
 
-  return result;
+  return userSaved;
+};
+
+const UpdateUserImage = async (userId, file) => {
+  let userImageUpdated;
+
+  if (!userId || !validator.isMongoId(userId)) {
+    throw new BadRequest("Invalid user ID");
+  }
+
+  userImageUpdated = await userModel
+    .findByIdAndUpdate(userId, { image: file.filename }, { new: false })
+    .exec();
+
+  if (!userImageUpdated) {
+    throw new NotFound("User not found to update");
+  }
+
+  DeleteImage(userImageUpdated.image);
 };
 
 const UpdateUserInfo = async (userId, infoUpdate) => {
@@ -204,76 +170,136 @@ const UpdateUserInfo = async (userId, infoUpdate) => {
   }
 };
 
-const UpdateUserImage = async (userId, file) => {
-  let userImageUpdated;
-
-  if (!userId || !validator.isMongoId(userId)) {
-    throw new BadRequest("Invalid user ID");
+const ValidateBasicInfoUser = (params) => {
+  let cleanParams;
+  if (!params) {
+    throw new BadRequest("Parameters are required");
   }
-
-  userImageUpdated = await userModel
-    .findByIdAndUpdate(userId, { image: file.filename }, { new: false })
-    .exec();
-
-  if (!userImageUpdated) {
-    throw new NotFound("User not found to update");
+  cleanParams = CleanBody(params);
+  if (
+    !cleanParams.username ||
+    validator.isEmpty(cleanParams.username, { ignore_whitespace: true })
+  ) {
+    throw new BadRequest("Username is required");
   }
-
-  DeleteImage(userImageUpdated.image);
+  if (
+    !cleanParams.nick ||
+    validator.isEmpty(cleanParams.nick, { ignore_whitespace: true })
+  ) {
+    throw new BadRequest("The nickname is required");
+  }
+  if (
+    !cleanParams.email ||
+    validator.isEmpty(cleanParams.email, { ignore_whitespace: true })
+  ) {
+    throw new BadRequest("Email is required");
+  }
+  if (!validator.isEmail(cleanParams.email)) {
+    throw new BadRequest("The email is invalid");
+  }
+  if (
+    !cleanParams.password ||
+    validator.isEmpty(cleanParams.password, { ignore_whitespace: true })
+  ) {
+    throw new BadRequest("Password is required");
+  }
+  if (cleanParams.password.length < 8) {
+    throw new BadRequest("The password must be at least 8 characters long.");
+  }
 };
 
-const GetUserAvatar = async (userId) => {
-  if (!userId || !validator.isMongoId(userId)) {
-    throw new BadRequest("Invalid user ID");
-  }
+const ValidateIdExist = async (id) => {
+  const count = await userModel.countDocuments({ _id: id });
+  const exist = count > 0;
+  return exist;
+};
 
-  const user = await userModel.findById(userId).exec();
+const ValidateLoginCredentials = async (params) => {
+  let cleanParams;
+  if (!params) {
+    throw new BadRequest("Parameters are required");
+  }
+  cleanParams = CleanBody(params);
+  const email = cleanParams.email.toLowerCase();
+  const user = await userModel.findOne({ email }).exec();
 
   if (!user) {
-    throw new NotFound("User not found");
+    throw new NotFound("The user does not exist");
   }
 
-  let filepath = path.resolve(`./uploads/users/avatars/${user.image}`);
+  let password = bcrypt.compareSync(cleanParams.password, user.password);
+  if (password === false) {
+    throw new Unauthorized("Wrong password");
+  }
 
-  return filepath;
+  return user;
 };
-const GetCounters = async (userId) => {
-  if (!userId || !validator.isMongoId(userId)) {
-    throw new BadRequest("Invalid user ID");
+
+const ValidateLoginInfo = (params) => {
+  let cleanParams;
+  if (!params) {
+    throw new BadRequest("Parameters are required");
   }
-
-  const exists = ValidateIdExist(userId);
-  if (!exists) {
-    throw new NotFound("User not found");
+  cleanParams = CleanBody(params);
+  if (
+    !cleanParams.email ||
+    validator.isEmpty(cleanParams.email, { ignore_whitespace: true })
+  ) {
+    throw new BadRequest("You have not entered the email");
   }
-
-  const counters = await Promise.allSettled([
-    followModel.countDocuments({ followed: userId }), // followers
-    followModel.countDocuments({ user: userId }), // following
-    postModel.countDocuments({ user: userId }), // posts
-  ]);
-  const [followersCount, followingCount, postsCount] = counters;
-
-  const posts = postsCount.status === "fulfilled" ? postsCount.value : 0;
-
-  const followers =
-    followersCount.status === "fulfilled" ? followersCount.value : 0;
-
-  const following =
-    followingCount.status === "fulfilled" ? followingCount.value : 0;
-
-  return { userId, posts, followers, following };
+  if (!validator.isEmail(cleanParams.email)) {
+    throw new BadRequest("Invalid Email");
+  }
+  if (
+    !cleanParams.password ||
+    validator.isEmpty(cleanParams.password, { ignore_whitespace: true })
+  ) {
+    throw new BadRequest("You have not entered the password");
+  }
 };
+
+const ValidateUserExists = async (params) => {
+  let cleanParams;
+  if (!params) {
+    throw new BadRequest("Parameters are required");
+  }
+  cleanParams = CleanBody(params);
+  let email;
+  let username;
+  if (cleanParams.email) {
+    email = cleanParams.email.toLowerCase();
+  }
+
+  if (cleanParams.username) {
+    username = cleanParams.username.toLowerCase();
+  }
+
+  const userExists = await userModel
+    .findOne({
+      $or: [{ email }, { username }],
+    })
+    .exec();
+
+  if (userExists && userExists.email === email) {
+    throw new Conflict(`The email ${email} is already registered`);
+  }
+
+  if (userExists && userExists.username === username) {
+    throw new Conflict(`The username ${username} is already registered`);
+  }
+};
+
 module.exports = {
-  ValidateBasicInfoUser,
-  ValidateUserExists,
-  ValidateLoginInfo,
-  ValidateLoginCredentials,
-  ValidateIdExist,
-  GetUserById,
   GetAllUsers,
-  UpdateUserInfo,
-  UpdateUserImage,
-  GetUserAvatar,
   GetCounters,
+  GetUserAvatar,
+  GetUserById,
+  SignUp,
+  UpdateUserImage,
+  UpdateUserInfo,
+  ValidateBasicInfoUser,
+  ValidateIdExist,
+  ValidateLoginCredentials,
+  ValidateLoginInfo,
+  ValidateUserExists,
 };
