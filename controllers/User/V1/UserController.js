@@ -393,6 +393,7 @@ const Login = async (req, res) => {
     statusCode: 200,
     message: "Login successful",
     token: token,
+    user: { userId: userlogged._id },
   });
 };
 
